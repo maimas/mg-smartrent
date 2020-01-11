@@ -5,12 +5,10 @@ import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import com.mg.smartrent.user.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @RestController
 @RequestMapping(value = "/rest/users")

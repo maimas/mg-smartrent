@@ -6,11 +6,18 @@ import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import static com.mg.smartrent.domain.enrichment.ModelEnricher.*;
 import static com.mg.smartrent.domain.validation.ModelValidator.*;
 
 @Service
+@Validated
 public class UserService {
 
     private MongoQueryService<User> queryService;
@@ -42,15 +49,13 @@ public class UserService {
         return queryService.save(model);
     }
 
-    public User findByTrackingId(String trackingId) {
+    public User findByTrackingId(@NotNull @NotBlank String trackingId) {
         return queryService.findOneBy("trackingId", trackingId, User.class);
     }
 
-    public User findByEmail(String email) {
+
+    public User findByEmail(@NotNull @NotBlank @Email String email) {
         return queryService.findOneBy("email", email, User.class);
     }
 
-    public PasswordEncoder getPasswordEncoder() {
-        return passwordEncoder;
-    }
 }
