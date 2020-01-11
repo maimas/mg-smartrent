@@ -1,5 +1,4 @@
 HELP.md
-taarget/
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -20,6 +19,7 @@ build/
 *.iws
 *.iml
 *.ipr
+*.log
 out/
 
 ### NetBeans ###

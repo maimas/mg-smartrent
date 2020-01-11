@@ -1,0 +1,6 @@
+rootProject.name = 'smartrent'
+
+include 'sr-gateway-api-service'
+include 'sr-property-service'
+include 'sr-renter-service'
+include 'sr-user-service'
