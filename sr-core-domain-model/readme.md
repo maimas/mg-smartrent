@@ -11,9 +11,11 @@ TBD
 example
 ```
 
-### Installing
+### Installing & Deployment
+Once the code is ready for deployment run ``mvn deploy`` and it will upload the package to GitHug package registry.
+Once jar package is deployed, you can add the dependency in to your project to use the models.
 
-TBD
+
 ```
 example
 ```
@@ -22,12 +24,9 @@ example
 ## Running the tests
 Run command 
 ```
-TBD
+mvn test
 ```
 
-
-## Deployment
-Include package dependency in to your project.
 
 ## Built With
 
