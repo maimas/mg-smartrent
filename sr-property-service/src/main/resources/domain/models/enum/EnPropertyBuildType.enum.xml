@@ -1,0 +1,6 @@
+<Enumeration itemType="EnPropertyBuildType" createAtRuntime="false" type="String">
+    <Enum enValue="apartment" caption="Apartment"/>
+    <Enum enValue="house"     caption="House"/>
+    <Enum enValue="studio"    caption="Studio"/>
+    <Enum enValue="other"     caption="Other"/>
+</Enumeration>

@@ -1,0 +1,7 @@
+<Enumeration itemType="EnPropertyCondition" createAtRuntime="false" type="String">
+    <Enum enValue="requiresReparation"  caption="Requires Reparation" descrption=""/>
+    <Enum enValue="cosmeticReparation" caption="Cosmetic Reparation" descrption=""/>
+    <Enum enValue="afterReparation"     caption="After Reparation" descrption=""/>
+    <Enum enValue="unknown"             caption="Unknown" descrption=""/>
+</Enumeration>
+

@@ -1,0 +1,30 @@
+##------------------------------------------------------------------
+##------DB CONFIGURATION----------------------------------------
+##------------------------------------------------------------------
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost/smartrent2
+      database: smartrent2
+
+##------------------------------------------------------------------
+##------DOMAIN CONFIGURATION----------------------------------------
+##------------------------------------------------------------------
+domain:
+  schemas: domain/models
+
+##------------------------------------------------------------------
+##------LOGGER CONFIGURATION----------------------------------------
+##------------------------------------------------------------------
+logging:
+  file:
+    path: logs
+    name: user.log
+    max-size: 10MB
+  level:
+    com.mg: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.boot: ERROR
+
+
