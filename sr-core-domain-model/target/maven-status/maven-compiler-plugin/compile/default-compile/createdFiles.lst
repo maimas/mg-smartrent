@@ -1,0 +1,11 @@
+com\mg\smartrent\domain\enrichment\TrackingIdGenerator.class
+com\mg\smartrent\domain\models\BizItem.class
+com\mg\smartrent\domain\enums\EnGender.class
+com\mg\smartrent\domain\enrichment\ModelEnricher.class
+com\mg\smartrent\domain\enums\EnUserStatus.class
+com\mg\smartrent\domain\models\Property.class
+com\mg\smartrent\domain\models\PropertyListing.class
+com\mg\smartrent\domain\validation\ModelValidator.class
+com\mg\smartrent\domain\models\User.class
+com\mg\smartrent\domain\validation\ModelValidationException.class
+com\mg\smartrent\domain\models\Renter.class
