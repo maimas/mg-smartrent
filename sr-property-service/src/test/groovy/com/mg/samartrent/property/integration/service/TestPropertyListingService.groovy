@@ -1,25 +1,33 @@
 package com.mg.samartrent.property.integration.service
 
+import com.mg.persistence.service.QueryService
 import com.mg.samartrent.property.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
+import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException
 import com.mg.smartrent.domain.validation.ModelValidationException
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.config.RestServicesConfig
 import com.mg.smartrent.property.service.PropertyListingService
 import com.mg.smartrent.property.service.PropertyService
+import com.mg.smartrent.property.service.UserService
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 
-import static com.mg.samartrent.property.ModelBuilder.generateProperty
-import static com.mg.samartrent.property.ModelBuilder.generatePropertyListing
+import javax.validation.ConstraintViolationException
+
+import static com.mg.samartrent.property.TestUtils.generateProperty
+import static com.mg.samartrent.property.TestUtils.generatePropertyListing
+import static com.mg.samartrent.property.TestUtils.generateUser
+import static org.mockito.Mockito.when
 import static org.springframework.http.HttpStatus.NOT_FOUND
 import static org.springframework.http.HttpStatus.OK
 
@@ -33,38 +41,39 @@ import static org.springframework.http.HttpStatus.OK
         properties = ["eureka.client.enabled:false"])
 class TestPropertyListingService extends IntegrationTestsSetup {
 
+    @Autowired
+    private PropertyService propertyService
 
-    @Mock
-    RestTemplate restTemplateMock
-
+    @MockBean
+    private UserService userService
     @Autowired
     @InjectMocks
     private PropertyListingService listingService
 
-    @Autowired
-    private PropertyService propertyService
-    @Autowired
-    private RestServicesConfig restServicesConfig;
 
     static boolean testsSetupExecuted
-    static Property dbProperty
+    static Property dbProperty = generateProperty()
 
     def setup() {
         if (!testsSetupExecuted) {
             purgeCollection(PropertyListing.class)
-            dbProperty = propertyService.save(generateProperty())
+
+            MockitoAnnotations.initMocks(this)
+            when(userService.userExists(dbProperty.getUserTID())).thenReturn(true)//mock external service call
+
+            dbProperty = propertyService.save(dbProperty)
             testsSetupExecuted = true
         }
+
     }
 
     def "test: save null listing"() {
-
         when:
         listingService.save(null)
 
         then: "exception is thrown"
-        ModelBusinessValidationException e = thrown()
-        e.getMessage() == "Listing could not be saved. Invalid Listing."
+        ConstraintViolationException e = thrown()
+        e.getMessage() == "save.listing: must not be null"
     }
 
     def "test: save listing for in-existent Property"() {
@@ -78,10 +87,10 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     }
 
     def "test: save listing for in-existent User"() {
-        setup:
+        setup: "mocking user"
         def listing = generatePropertyListing()
         listing.setPropertyTID(dbProperty.getTrackingId())
-        mockUserRestCall(listing.userTID, new ResponseEntity("Mocking: User not found", NOT_FOUND))
+        when(userService.userExists(listing.getUserTID())).thenReturn(false)//mock external service call to user not found
 
         when: "saving listing"
         listingService.save(listing)
@@ -92,10 +101,10 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     }
 
     def "test: save listing with past checkin/checkout date"() {
-        setup:
+        setup: "mock user exists"
         def listing = generatePropertyListing()
         listing.setPropertyTID(dbProperty.getTrackingId())
-        mockUserRestCall(listing.userTID, new ResponseEntity("Mocked response", OK));
+        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
 
         when: "saving with past dates"
         listing.setCheckInDate(new Date(System.currentTimeMillis() - 100000))
@@ -108,11 +117,12 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         e.getMessage().contains('Invalid future date for [CheckOut Date] =')
     }
 
+    //todo: fix the test by creating an anotation to validate the date interval: date1.before(date2)
     def "test: save listing for with checkin after checkout date"() {
         setup:
         def listing = generatePropertyListing()
         listing.setPropertyTID(dbProperty.getTrackingId())
-        mockUserRestCall(listing.userTID, new ResponseEntity("Mocked response", OK))
+        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
 
         when: "checkin after checkout"
         listing.setCheckInDate(new Date(System.currentTimeMillis() + 100000))
@@ -128,7 +138,7 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         setup:
         def listing = generatePropertyListing()
         listing.setPropertyTID(dbProperty.getTrackingId())
-        mockUserRestCall(listing.userTID, new ResponseEntity("Mocked response", OK))
+        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
 
         when: "saving listing"
         listing = listingService.save(listing)
@@ -143,45 +153,31 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         listing.getTotalViews() == 3
         listing.getCheckInDate().after(new Date())
         listing.getCheckOutDate().after(new Date())
-
     }
 
-    def "test: find by propertyTID"() {
+    def "test: findByPropertyTID then findByUserTID"() {
         setup:
-        def listing = generatePropertyListing()
-        listing.setPropertyTID(propertyService.save(generateProperty()).getTrackingId())
+        def property = generateProperty()
+        when(userService.userExists(property.getUserTID())).thenReturn(true)//mock external service call
 
-        mockUserRestCall(listing.userTID, new ResponseEntity("Mocked response", OK));
+        def listing = generatePropertyListing()
+        listing.setPropertyTID(propertyService.save(property).getTrackingId())
+        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+
         listing = listingService.save(listing)
 
-        when: 'checking number of saved instances'
+        when:
         def listings = listingService.findByPropertyTID(listing.getPropertyTID())
+
+        then: 'only one instance found'
+        listings.size() == 1
+
+        when:
+        listings = listingService.findByPropertyTID(listing.getPropertyTID())
 
         then: 'only one instance found'
         listings.size() == 1
     }
 
-    def "test: find by userTID"() {
-        setup:
-        def listing = generatePropertyListing()
-        listing.setPropertyTID(dbProperty.getTrackingId())
-        listing.setUserTID("invalidMockedUserID")
 
-        mockUserRestCall(listing.userTID, new ResponseEntity("Mocked response", OK));
-        listing = listingService.save(listing)
-
-        when: 'checking number of saved instances'
-        def listings = listingService.findByUserTID(listing.getUserTID())
-
-        then: 'only one instance is found'
-        listings.size() == 1
-
-    }
-
-
-    def mockUserRestCall(String userTID, ResponseEntity responseEntity) {
-        MockitoAnnotations.initMocks(this)
-        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users/exists/trackingId=" + userTID)
-        Mockito.when(restTemplateMock.getForEntity(uri, ResponseEntity.class)).thenReturn(responseEntity)
-    }
 }

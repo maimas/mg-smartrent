@@ -1,41 +1,54 @@
 package com.mg.smartrent.property.service;
 
 
-import com.mg.persistence.service.nosql.MongoQueryService;
+import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.models.Property;
+import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.mg.smartrent.domain.enrichment.ModelEnricher.enrich;
 import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 
 @Service
+@Validated
 public class PropertyService {
 
-    private MongoQueryService<Property> queryService;
+    private UserService userService;
+    private QueryService<Property> queryService;
 
 
-    public PropertyService(MongoQueryService<Property> queryService) {
+    public PropertyService(QueryService<Property> queryService, UserService userService) {
         this.queryService = queryService;
+        this.userService = userService;
     }
 
 
-    public Property save(Property model) throws ModelValidationException {
+    public Property save(@NotNull Property model) throws ModelValidationException {
+
+        if (!userService.userExists(model.getUserTID())) {
+            throw new ModelBusinessValidationException(String.format("User with trackingId=%s not found.", model.getUserTID()));
+        }
+
         enrich(model);
         validate(model);
         return queryService.save(model);
     }
 
 
-    public Property findByTrackingId(String trackingId) {
+    public Property findByTrackingId(@NotNull @NotBlank String trackingId) {
         List<Property> propertyList = queryService.findAllBy("trackingId", trackingId, Property.class);
         return (propertyList == null || propertyList.isEmpty()) ? null : propertyList.get(0);
     }
 
-    public List<Property> findByUserTID(String userTID) {
+    public List<Property> findByUserTID(@NotNull @NotBlank String userTID) {
         return queryService.findAllBy("userTID", userTID, Property.class);
     }
+
+
 }

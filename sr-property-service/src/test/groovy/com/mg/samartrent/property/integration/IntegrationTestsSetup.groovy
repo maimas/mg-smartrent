@@ -22,7 +22,6 @@ import spock.lang.Specification
 @TestPropertySource(locations = "classpath:test-application.yml")
 class IntegrationTestsSetup extends Specification {
 
-    protected static MockMvc mockMvc
     private static MongodExecutable mongoExecutable = null
 
     @Autowired

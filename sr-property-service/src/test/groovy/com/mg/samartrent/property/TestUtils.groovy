@@ -1,20 +1,20 @@
 package com.mg.samartrent.property
 
-import com.mg.smartrent.domain.enums.EnUserStatus
+import com.mg.smartrent.domain.enums.EnBuildingType
+import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.User
 
-
-class ModelBuilder {
+class TestUtils {
 
     static Property generateProperty() {
 
         Property property = new Property()
 
         property.setUserTID("userId1234")
-        property.setBuildingType("apartment")
-        property.setCondition("requiresReparation")
+        property.setBuildingType(EnBuildingType.Condo.name())
+        property.setCondition(EnPropertyCondition.Normal.name())
         property.setTotalRooms(10)
         property.setTotalBathRooms(5)
         property.setTotalBalconies(1)
@@ -27,7 +27,7 @@ class ModelBuilder {
     static PropertyListing generatePropertyListing() {
         PropertyListing listing = new PropertyListing()
         listing.setUserTID("mockedUserId")
-        listing.setPropertyTID("nonExistentPropertyId1234")
+        listing.setPropertyTID("mockedPropertyId")
         listing.setListed(true)
         listing.setPrice(100)
         listing.setTotalViews(3)
@@ -48,5 +48,6 @@ class ModelBuilder {
 
         return user
     }
+
 
 }

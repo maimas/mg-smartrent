@@ -1,54 +1,44 @@
 package com.mg.smartrent.property.service;
 
-import com.mg.persistence.service.nosql.MongoQueryService;
-import com.mg.smartrent.domain.enrichment.ModelEnricher;
+import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.models.PropertyListing;
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
-import com.mg.smartrent.domain.validation.ModelValidator;
-import com.mg.smartrent.property.config.RestServicesConfig;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.validation.annotation.Validated;
 
-import java.net.URI;
-import java.util.ArrayList;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static com.mg.smartrent.domain.enrichment.ModelEnricher.enrich;
 import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 
 @Service
+@Validated
 public class PropertyListingService {
 
-    private RestTemplate restTemplate;
-    private PropertyService propertyService;
-    private RestServicesConfig restServicesConfig;
-    private MongoQueryService<PropertyListing> queryService;
 
-    public PropertyListingService(MongoQueryService<PropertyListing> queryService,
+    private UserService userService;
+    private PropertyService propertyService;
+    private QueryService<PropertyListing> queryService;
+
+    public PropertyListingService(QueryService<PropertyListing> queryService,
                                   PropertyService propertyService,
-                                  RestTemplate restTemplate,
-                                  RestServicesConfig restServicesConfig) {
+                                  UserService userService) {
         this.propertyService = propertyService;
         this.queryService = queryService;
-        this.restTemplate = restTemplate;
-        this.restServicesConfig = restServicesConfig;
+        this.userService = userService;
     }
 
 
-    public PropertyListing save(PropertyListing listing) throws ModelBusinessValidationException, ModelValidationException {
-
-        if (listing == null) {
-            throw new ModelBusinessValidationException("Listing could not be saved. Invalid Listing.");
-        }
+    public PropertyListing save(@NotNull PropertyListing listing) throws ModelValidationException {
 
         if (propertyService.findByTrackingId(listing.getPropertyTID()) == null) {
             throw new ModelBusinessValidationException("Listing could not be saved. Property not found.");
         }
 
-        if (!userExists(listing.getUserTID())) {
+        if (!userService.userExists(listing.getUserTID())) {
             throw new ModelBusinessValidationException("Listing could not be saved. User not found, UserTID = " + listing.getUserTID());
         }
 
@@ -58,19 +48,12 @@ public class PropertyListingService {
     }
 
 
-    public List<PropertyListing> findByPropertyTID(String propertyTID) {
+    public List<PropertyListing> findByPropertyTID(@NotNull @NotBlank String propertyTID) {
         return queryService.findAllBy("propertyTID", propertyTID, PropertyListing.class);
     }
 
-    public List<PropertyListing> findByUserTID(String userTID) {
+    public List<PropertyListing> findByUserTID(@NotNull @NotBlank String userTID) {
         return queryService.findAllBy("userTID", userTID, PropertyListing.class);
     }
 
-
-    private boolean userExists(String userTID) {
-        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users/exists/trackingId=" + userTID);
-        ResponseEntity response = restTemplate.getForEntity(uri, ResponseEntity.class);
-
-        return response.getStatusCode() == HttpStatus.OK;
-    }
 }
