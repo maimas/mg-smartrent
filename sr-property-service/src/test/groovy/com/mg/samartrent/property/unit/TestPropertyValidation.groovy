@@ -19,7 +19,6 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static com.mg.samartrent.property.TestUtils.generateProperty
-import static org.apache.commons.beanutils.BeanUtils.setProperty
 import static org.mockito.Mockito.when
 
 /**
@@ -50,14 +49,16 @@ class TestPropertyValidation extends Specification {
         when(queryService.save(model)).thenReturn(model)//mock db call
 
         when: "saving property with a new test value"
-        setProperty(model, field, value)
+        BeanWrapperImpl beanUtilsWrapper = new BeanWrapperImpl(model)
+        beanUtilsWrapper.setPropertyValue(field, value)
 
         then: "expectations are meet"
         try {
             Property dbModel = propertyService.save(model)
-            BeanWrapperImpl beanUtilsWrapper = new BeanWrapperImpl(dbModel)
+            beanUtilsWrapper = new BeanWrapperImpl(dbModel)
 
             Assert.assertEquals(value, beanUtilsWrapper.getPropertyValue(field))
+
             Assert.assertEquals(expectException, false)
             Assert.assertEquals(13, beanUtilsWrapper.getProperties().size())//13 properties
 

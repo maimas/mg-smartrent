@@ -6,7 +6,6 @@ import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.service.PropertyListingService
 import com.mg.smartrent.property.service.PropertyService
 import com.mg.smartrent.property.service.UserService
-import org.apache.commons.beanutils.BeanUtils
 import org.junit.Assert
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -20,8 +19,7 @@ import spock.lang.Unroll
 
 import static com.mg.samartrent.property.TestUtils.generateProperty
 import static com.mg.samartrent.property.TestUtils.generatePropertyListing
-import static java.lang.System.*
-import static org.apache.commons.beanutils.BeanUtils.setProperty
+import static java.lang.System.currentTimeMillis
 import static org.mockito.Mockito.when
 
 /**
@@ -57,13 +55,15 @@ class TestPropertyListingValidation extends Specification {
         when(queryService.save(model)).thenReturn(model)//mock db call
 
         when: "saving listing with a new test value"
-        setProperty(model, field, value)
+        BeanWrapperImpl beanUtilsWrapper = new BeanWrapperImpl(model)
+        beanUtilsWrapper.setPropertyValue(field, value)
+
 
         then: "expectations are meet"
 
         try {
             PropertyListing dbModel = propertyListingService.save(model)
-            BeanWrapperImpl beanUtilsWrapper = new BeanWrapperImpl(dbModel)
+            beanUtilsWrapper = new BeanWrapperImpl(dbModel)
 
             Assert.assertEquals(value, beanUtilsWrapper.getPropertyValue(field))
             Assert.assertEquals(expectException, false)
