@@ -1,47 +1,46 @@
 package com.mg.smartrent.user.service;
 
-import com.mg.persistence.service.nosql.MongoQueryService;
+import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.enums.EnUserStatus;
 import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import static com.mg.smartrent.domain.enrichment.ModelEnricher.*;
-import static com.mg.smartrent.domain.validation.ModelValidator.*;
+import static com.mg.smartrent.domain.enrichment.ModelEnricher.enrich;
+import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 
 @Service
 @Validated
 public class UserService {
 
-    private MongoQueryService<User> queryService;
+    private QueryService<User> queryService;
     private PasswordEncoder passwordEncoder;
 
 
-    public UserService(MongoQueryService<User> queryService, PasswordEncoder passwordEncoder) {
+    public UserService(QueryService<User> queryService, PasswordEncoder passwordEncoder) {
         this.queryService = queryService;
         this.passwordEncoder = passwordEncoder;
     }
 
 
-    public User save(User model) throws ModelValidationException {
-
+    public User save(@NotNull User model) throws ModelValidationException {
 
         if (model.getId() == null) {//new user
-            model.setPassword(passwordEncoder.encode(model.getPassword()));
-            model.setStatus(EnUserStatus.Active.name());
-
-        } else {//reset password
-            User dbUser = findByEmail(model.getEmail());
-            if (dbUser != null && passwordEncoder.matches(model.getPassword(), dbUser.getPassword())) {
-                model.setPassword(passwordEncoder.encode(model.getPassword()));
+            if (StringUtils.isBlank(model.getPassword())) {
+                throw new ModelValidationException("User could not be saved. Password not specified.");
             }
+
+            model.setPassword(passwordEncoder.encode(model.getPassword()));
+            model.setStatus(EnUserStatus.Pending.name());
+        } else {
+            //todo: update
         }
 
         enrich(model);

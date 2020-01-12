@@ -54,7 +54,7 @@ class TestUserService extends IntegrationTestsSetup {
         dbUser.getFirstName() == "FName"
         dbUser.getLastName() == "LName"
         dbUser.getEmail() == "test.user@domain.com"
-        dbUser.getStatus() == EnUserStatus.Active.name()
+        dbUser.getStatus() == EnUserStatus.Pending.name()
         dbUser.getPassword() != "12341234"
         passwordEncoder.matches("12341234", dbUser.getPassword())
 
@@ -76,17 +76,17 @@ class TestUserService extends IntegrationTestsSetup {
     }
 
     @Unroll
-    def "test: find renter by invalid trackingId #value"() {
+    def "test: find user by invalid trackingId #value"() {
         when:
         userService.findByTrackingId(value)
 
         then:
         ConstraintViolationException e = thrown()
-        e.getMessage() == errorMessage
+        e.getMessage().contains(errorMessage)
 
         where:
         value | errorMessage
-        null  | "findByTrackingId.arg0: must not be null, findByTrackingId.arg0: must not be blank"
+        null  | "findByTrackingId.arg0: must not be null"
         ""    | "findByTrackingId.arg0: must not be blank"
     }
 
@@ -112,11 +112,11 @@ class TestUserService extends IntegrationTestsSetup {
 
         then:
         ConstraintViolationException e = thrown()
-        e.getMessage() == errorMessage
+        e.getMessage().contains(errorMessage)
 
         where:
         value               | errorMessage
-        null                | "findByEmail.arg0: must not be null, findByEmail.arg0: must not be blank"
+        null                | "findByEmail.arg0: must not be null"
         ""                  | "findByEmail.arg0: must not be blank"
         "invalidEmail"      | "findByEmail.arg0: must be a well-formed email address"
         "inexistent.email@" | "findByEmail.arg0: must be a well-formed email address"

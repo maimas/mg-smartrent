@@ -80,7 +80,7 @@ class TestUserRestController extends IntegrationTestsSetup {
     def "test: get by email in-existent user"() {
 
         when:
-        def url = "http://localhost:$port/rest/users?email=test@test@gmail.com"
+        def url = "http://localhost:$port/rest/users?email=test.test@gmail.com"
         MvcResult result = doGet(mockMvc, url)
 
         then:
