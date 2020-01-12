@@ -1,5 +1,6 @@
 package com.mg.samartrent.property.integration
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodStarter
@@ -22,6 +23,7 @@ import spock.lang.Specification
 @TestPropertySource(locations = "classpath:test-application.yml")
 class IntegrationTestsSetup extends Specification {
 
+    protected static MockMvc mockMvc
     private static MongodExecutable mongoExecutable = null
 
     @Autowired
@@ -72,10 +74,9 @@ class IntegrationTestsSetup extends Specification {
     }
 
 
-//    List mvcResultToModels(MvcResult mvcResult) {
-//        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<BizItemModel>>() {
-//        })
-//    }
+    List mvcResultToModels(MvcResult mvcResult, TypeReference typeReference) {
+        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), typeReference)
+    }
 
     private static void startEmbeddedMongo() {
         MongodStarter starter = MongodStarter.getDefaultInstance()
