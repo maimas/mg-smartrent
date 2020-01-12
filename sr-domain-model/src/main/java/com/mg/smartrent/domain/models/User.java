@@ -24,7 +24,6 @@ public class User extends BizItem {
     public String lastName;
 
     @NotNull
-    @NotBlank
     @Email
     @Size(max = 100)
     public String email;
