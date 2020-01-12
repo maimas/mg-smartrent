@@ -24,7 +24,7 @@ public class ModelValidator {
         if (violations.size() > 0) {
             StringBuilder errors = new StringBuilder();
             violations.forEach(it -> {
-                String msg = String.format("Validation error: Field [%s], value [%s], reason [%s]", it.getPropertyPath(), it.getInvalidValue(), it.getMessage());
+                String msg = String.format("Field [%s], value [%s], reason [%s]", it.getPropertyPath(), it.getInvalidValue(), it.getMessage());
                 errors.append(msg).append("\n");
             });
             throw new ModelValidationException(errors.toString());
