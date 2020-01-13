@@ -1,5 +1,0 @@
-<Enumeration itemType="EnUserStatus" type="String">
-    <Enum enValue="pending" caption="PendingConfirmation" description="PendingConfirmation"/>
-    <Enum enValue="enabled" caption="Enabled" description="Enabled"/>
-</Enumeration>
-

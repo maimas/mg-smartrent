@@ -1,5 +1,0 @@
-<Enumeration itemType="EnGender" createAtRuntime="false" type="String">
-    <Enum enValue="male"    caption="Male"    description="hd"/>
-    <Enum enValue="female"  caption="Female"  description="hd"/>
-    <Enum enValue="unknown" caption="Unknown" description="hd"/>
-</Enumeration>
