@@ -1,22 +1,5 @@
-server:
-  port: 3001
-
 ##------------------------------------------------------------------
-##------LOGGER CONFIGURATION----------------------------------------
-##------------------------------------------------------------------
-logging:
-  file:
-    path: logs
-    name: application.log
-    max-size: 10MB
-  level:
-    com.mg: INFO
-    org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.springframework.boot: ERROR
-
-##------------------------------------------------------------------
-##------DATABASE CONFIGURATION--------------------------------------
+##------DB CONFIGURATION----------------------------------------
 ##------------------------------------------------------------------
 spring:
   data:
@@ -24,9 +7,19 @@ spring:
       uri: mongodb://localhost/smartrent2
       database: smartrent2
 
+
 ##------------------------------------------------------------------
-##------DOMAIN CONFIGURATION----------------------------------------
+##------LOGGER CONFIGURATION----------------------------------------
 ##------------------------------------------------------------------
-domain:
-  schemas: domain/models
+logging:
+  file:
+    path: logs
+    name: user.log
+    max-size: 10MB
+  level:
+    com.mg: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.boot: ERROR
+
 
