@@ -5,6 +5,8 @@ import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.models.Property;
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,6 +21,8 @@ import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 @Validated
 public class PropertyService {
 
+    private static final Logger log = LogManager.getLogger(PropertyService.class);
+
     private UserService userService;
     private QueryService<Property> queryService;
 
@@ -30,14 +34,15 @@ public class PropertyService {
 
 
     public Property save(@NotNull Property model) throws ModelValidationException {
-
         if (!userService.userExists(model.getUserTID())) {
             throw new ModelBusinessValidationException(String.format("User with trackingId=%s not found.", model.getUserTID()));
         }
-
         enrich(model);
         validate(model);
-        return queryService.save(model);
+        Property property = queryService.save(model);
+        log.info("Property created. TrackingId = " + property.getTrackingId());
+
+        return property;
     }
 
 

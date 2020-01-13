@@ -155,7 +155,7 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         listing.getCheckOutDate().after(new Date())
     }
 
-    def "test: findByPropertyTID then findByUserTID"() {
+    def "test: findByTracking then findByPropertyTID then findByUserTID"() {
         setup:
         def property = generateProperty()
         when(userService.userExists(property.getUserTID())).thenReturn(true)//mock external service call
@@ -165,6 +165,13 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
 
         listing = listingService.save(listing)
+
+        when:
+        def dbListing = listingService.findByTrackingId(listing.getTrackingId())
+
+        then: 'found'
+        dbListing != null
+
 
         when:
         def listings = listingService.findByPropertyTID(listing.getPropertyTID())
@@ -177,6 +184,31 @@ class TestPropertyListingService extends IntegrationTestsSetup {
 
         then: 'only one instance found'
         listings.size() == 1
+    }
+
+    def "test: publish listing"() {
+        setup:
+        def property = generateProperty()
+        when(userService.userExists(property.getUserTID())).thenReturn(true)//mock external service call
+
+        def listing = generatePropertyListing()
+        listing.setPropertyTID(propertyService.save(property).getTrackingId())
+        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+
+        listing = listingService.save(listing)
+
+        when:
+        def dbListing = listingService.publish(listing.getTrackingId(), true)
+
+        then:
+        dbListing.isListed()
+
+
+        when:
+        dbListing = listingService.publish(listing.getTrackingId(), false)
+
+        then:
+        !dbListing.isListed()
     }
 
 

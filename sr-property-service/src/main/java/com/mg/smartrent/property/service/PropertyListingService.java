@@ -47,6 +47,24 @@ public class PropertyListingService {
         return queryService.save(listing);
     }
 
+    public PropertyListing publish(String trackingId, boolean listed) throws ModelValidationException {
+        PropertyListing listing = findByTrackingId(trackingId);
+
+        if (listing == null) {
+            throw new ModelBusinessValidationException("Listing not found.");
+        }
+        listing.setListed(listed);
+        save(listing);
+        return listing;
+    }
+
+
+    public PropertyListing findByTrackingId(@NotNull @NotBlank String trackingId) {
+        List<PropertyListing> listings = queryService.findAllBy("trackingId", trackingId, PropertyListing.class);
+
+        return (listings != null && !listings.isEmpty()) ? listings.get(0) : null;
+    }
+
 
     public List<PropertyListing> findByPropertyTID(@NotNull @NotBlank String propertyTID) {
         return queryService.findAllBy("propertyTID", propertyTID, PropertyListing.class);
