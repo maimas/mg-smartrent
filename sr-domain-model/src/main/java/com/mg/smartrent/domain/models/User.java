@@ -1,6 +1,5 @@
 package com.mg.smartrent.domain.models;
 
-import com.mg.smartrent.domain.enums.EnBuildingType;
 import com.mg.smartrent.domain.enums.EnUserStatus;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
@@ -25,11 +24,11 @@ public class User extends BizItem {
 
     @NotNull
     @Email
-    @Size(max = 100)
+    @Size(min = 1, max = 100)
     public String email;
 
     @NotNull
-    @NotBlank
+    @Size(min = 6, max = 1000)
     public String password;
 
     @NotNull
