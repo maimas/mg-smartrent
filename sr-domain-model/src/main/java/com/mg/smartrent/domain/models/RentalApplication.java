@@ -1,31 +1,33 @@
 package com.mg.smartrent.domain.models;
 
-
+import com.mg.smartrent.domain.enums.EnCurrency;
+import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class PropertyListing extends BizItem {
+public class RentalApplication extends BizItem {
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String userTID;
+    private String renterUserTID;
 
     @NotNull
     @Size(min = 1, max = 100)
     private String propertyTID;
 
-    @PositiveOrZero
-    private long price;
+    @Positive
+    private Integer price;
 
-    @PositiveOrZero
-    private int totalViews;
+    @NotNull
+    @ValueOfEnum(enumClass = EnCurrency.class)
+    private String currency;
 
     @NotNull
     private Date checkInDate;
@@ -33,9 +35,8 @@ public class PropertyListing extends BizItem {
     @NotNull
     private Date checkOutDate;
 
-    private boolean listed;
-
-    public PropertyListing() {
+    public RentalApplication() {
 
     }
+
 }

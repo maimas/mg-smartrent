@@ -6,7 +6,6 @@ import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
