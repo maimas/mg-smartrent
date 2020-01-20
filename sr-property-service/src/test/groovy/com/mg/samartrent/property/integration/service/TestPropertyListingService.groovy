@@ -1,35 +1,26 @@
 package com.mg.samartrent.property.integration.service
 
-import com.mg.persistence.service.QueryService
+
 import com.mg.samartrent.property.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
-import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException
 import com.mg.smartrent.domain.validation.ModelValidationException
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.config.RestServicesConfig
 import com.mg.smartrent.property.service.PropertyListingService
 import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.UserService
+import com.mg.smartrent.property.service.ExternalUserService
 import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.http.ResponseEntity
-import org.springframework.web.client.RestTemplate
 
 import javax.validation.ConstraintViolationException
 
 import static com.mg.samartrent.property.TestUtils.generateProperty
 import static com.mg.samartrent.property.TestUtils.generatePropertyListing
-import static com.mg.samartrent.property.TestUtils.generateUser
 import static org.mockito.Mockito.when
-import static org.springframework.http.HttpStatus.NOT_FOUND
-import static org.springframework.http.HttpStatus.OK
 
 /**
  * This tests suite is designed to ensure correctness of the model validation constraints.
@@ -45,7 +36,7 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     private PropertyService propertyService
 
     @MockBean
-    private UserService userService
+    private ExternalUserService userService
     @Autowired
     @InjectMocks
     private PropertyListingService listingService

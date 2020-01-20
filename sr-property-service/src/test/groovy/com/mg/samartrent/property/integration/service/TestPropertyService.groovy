@@ -6,9 +6,8 @@ import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.UserService
+import com.mg.smartrent.property.service.ExternalUserService
 import org.mockito.InjectMocks
-import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.when
 class TestPropertyService extends IntegrationTestsSetup {
 
     @MockBean
-    private UserService userService
+    private ExternalUserService userService
     @Autowired
     @InjectMocks
     private PropertyService propertyService

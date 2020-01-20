@@ -13,12 +13,12 @@ import java.net.URI;
 
 @Service
 @Validated
-public class UserService {
+public class ExternalUserService {
 
     private RestServicesConfig restServicesConfig;
     private RestTemplate restTemplate;
 
-    public UserService(RestServicesConfig restServicesConfig, RestTemplate restTemplate) {
+    public ExternalUserService(RestServicesConfig restServicesConfig, RestTemplate restTemplate) {
         this.restServicesConfig = restServicesConfig;
         this.restTemplate = restTemplate;
     }

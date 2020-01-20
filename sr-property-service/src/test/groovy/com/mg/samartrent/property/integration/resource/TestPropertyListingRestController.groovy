@@ -9,7 +9,7 @@ import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.resource.PropertyListingRestController
 import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.UserService
+import com.mg.smartrent.property.service.ExternalUserService
 import org.apache.commons.lang.RandomStringUtils
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import spock.lang.Shared
 import spock.lang.Stepwise
 
 import static org.mockito.Mockito.when
@@ -40,7 +39,7 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
     private PropertyListingRestController restController
 
     @MockBean
-    private UserService userService
+    private ExternalUserService userService
     @Autowired
     @InjectMocks
     private PropertyService propertyService

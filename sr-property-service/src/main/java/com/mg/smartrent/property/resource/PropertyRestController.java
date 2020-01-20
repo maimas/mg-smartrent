@@ -37,6 +37,4 @@ public class PropertyRestController {
         return new ResponseEntity<>(propertyService.findByTrackingId(trackingId), HttpStatus.OK);
     }
 
-
-
 }

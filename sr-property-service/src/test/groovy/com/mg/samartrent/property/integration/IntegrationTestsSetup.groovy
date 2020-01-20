@@ -39,8 +39,8 @@ class IntegrationTestsSetup extends Specification {
     }
 
     void purgeCollection(Class entityClazz) {
-        mongoTemplate.remove(new Query(Criteria.where("_id").exists(true)), entityClazz)
-        println "Collection ${entityClazz.simpleName} purged."
+        mongoTemplate.dropCollection(entityClazz.simpleName)
+        println "Collection ${entityClazz.simpleName} dropped."
     }
 
     MvcResult doPost(MockMvc mockMvc, String restUri) {

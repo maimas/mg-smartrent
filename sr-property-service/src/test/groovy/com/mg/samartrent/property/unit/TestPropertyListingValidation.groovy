@@ -5,7 +5,7 @@ import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.service.PropertyListingService
 import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.UserService
+import com.mg.smartrent.property.service.ExternalUserService
 import org.junit.Assert
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -35,7 +35,7 @@ class TestPropertyListingValidation extends Specification {
     @Mock
     private QueryService<PropertyListing> queryService
     @MockBean
-    private UserService userService
+    private ExternalUserService userService
     @MockBean
     private PropertyService propertyService
 

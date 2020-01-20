@@ -23,11 +23,11 @@ public class PropertyService {
 
     private static final Logger log = LogManager.getLogger(PropertyService.class);
 
-    private UserService userService;
+    private ExternalUserService userService;
     private QueryService<Property> queryService;
 
 
-    public PropertyService(QueryService<Property> queryService, UserService userService) {
+    public PropertyService(QueryService<Property> queryService, ExternalUserService userService) {
         this.queryService = queryService;
         this.userService = userService;
     }

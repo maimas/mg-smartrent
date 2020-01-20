@@ -6,7 +6,7 @@ import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.UserService
+import com.mg.smartrent.property.service.ExternalUserService
 import org.junit.Assert
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when
 class TestPropertyValidation extends Specification {
 
     @MockBean
-    private UserService userService
+    private ExternalUserService userService
     @Mock
     private QueryService<Property> queryService
     @Autowired

@@ -8,7 +8,7 @@ import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.resource.PropertyRestController
 import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.UserService
+import com.mg.smartrent.property.service.ExternalUserService
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +36,7 @@ class TestPropertyRestController extends IntegrationTestsSetup {
     private PropertyRestController restController
 
     @MockBean
-    private UserService userService
+    private ExternalUserService userService
     @Autowired
     @InjectMocks
     private PropertyService propertyService

@@ -1,9 +1,11 @@
 package com.mg.samartrent.property
 
 import com.mg.smartrent.domain.enums.EnBuildingType
+import com.mg.smartrent.domain.enums.EnCurrency
 import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
+import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.models.User
 
 class TestUtils {
@@ -49,5 +51,16 @@ class TestUtils {
         return user
     }
 
+    static RentalApplication generateRentalApplication() {
+
+        RentalApplication model = new RentalApplication()
+        model.setRenterUserTID("mockedUserId")
+        model.setPropertyTID("mockedPropertyId")
+        model.setCheckInDate(new Date(System.currentTimeMillis() - 1000000000))
+        model.setCheckOutDate(new Date(System.currentTimeMillis() + 1000000000))
+        model.setPrice(100)
+        model.setCurrency(EnCurrency.USD.name())
+        return model
+    }
 
 }

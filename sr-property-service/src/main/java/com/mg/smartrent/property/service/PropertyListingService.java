@@ -19,13 +19,13 @@ import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 public class PropertyListingService {
 
 
-    private UserService userService;
+    private ExternalUserService userService;
     private PropertyService propertyService;
     private QueryService<PropertyListing> queryService;
 
     public PropertyListingService(QueryService<PropertyListing> queryService,
                                   PropertyService propertyService,
-                                  UserService userService) {
+                                  ExternalUserService userService) {
         this.propertyService = propertyService;
         this.queryService = queryService;
         this.userService = userService;
