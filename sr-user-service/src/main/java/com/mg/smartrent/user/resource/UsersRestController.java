@@ -38,19 +38,11 @@ public class UsersRestController {
         return new ResponseEntity<>(userService.findByTrackingId(trackingId), HttpStatus.OK);
     }
 
-    /**
-     * Check is the user exists by TrackingID.
-     *
-     * @param trackingId - user TrackingID
-     * @return - HttpStatus.OK (200) with empty body if the user is present else HttpStatus.NOT_FOUND (404).
-     */
     @GetMapping(value = "/exists/{trackingId}")
-    public ResponseEntity existsByTrackingId(@PathVariable String trackingId) {
+    public ResponseEntity<Boolean> existsByTrackingId(@PathVariable String trackingId) {
 
-        if (userService.findByTrackingId(trackingId) == null) {
-            return new ResponseEntity<>("No such user.", NOT_FOUND);
-        }
-        return ResponseEntity.ok(null);
+        boolean found = userService.findByTrackingId(trackingId) != null;
+        return ResponseEntity.ok(found);
     }
 
 

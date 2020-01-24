@@ -1,7 +1,7 @@
-package com.mg.samartrent.property.integration.resource
+package com.mg.samartrent.user.integration.resource
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.user.UserApplication
 import com.mg.smartrent.user.resource.UsersRestController
@@ -9,18 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
-import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.client.RestTemplate
 import spock.lang.Stepwise
 
-import static com.mg.samartrent.property.ModelBuilder.generateUser
+import static com.mg.samartrent.user.ModelBuilder.generateUser
 
 @SpringBootTest(
         classes = UserApplication.class,
@@ -85,7 +79,7 @@ class TestUserRestController extends IntegrationTestsSetup {
 
         then:
         result.getResponse().getStatus() == HttpStatus.OK.value()
-        result.getResponse().contentAsString == ""
+        result.getResponse().getContentAsString() == ""
     }
 
     def "test: get existing user by trackingId"() {
@@ -121,7 +115,7 @@ class TestUserRestController extends IntegrationTestsSetup {
 
         then:
         result.getResponse().getStatus() == HttpStatus.OK.value()
-        result.getResponse().getContentAsString() == ""
+        result.getResponse().getContentAsString() == "true"
     }
 
     def "test: user exists for in-existent user"() {
@@ -130,8 +124,8 @@ class TestUserRestController extends IntegrationTestsSetup {
         MvcResult result = doGet(mockMvc, url)
 
         then:
-        result.getResponse().getStatus() == HttpStatus.NOT_FOUND.value()
-        result.getResponse().getContentAsString() == "No such user."
+        result.getResponse().getStatus() == HttpStatus.OK.value()
+        result.getResponse().getContentAsString() == "false"
     }
 
 }

@@ -1,4 +1,4 @@
-package com.mg.samartrent.property.integration
+package com.mg.samartrent.user.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.flapdoodle.embed.mongo.MongodExecutable

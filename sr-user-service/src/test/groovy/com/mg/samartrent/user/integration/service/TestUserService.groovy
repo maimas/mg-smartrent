@@ -1,7 +1,8 @@
-package com.mg.samartrent.property.integration.service
+package com.mg.samartrent.user.integration.service
 
 
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
+import com.mg.smartrent.domain.enums.EnGender
 import com.mg.smartrent.domain.enums.EnUserStatus
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.user.UserApplication
@@ -13,7 +14,7 @@ import spock.lang.Unroll
 
 import javax.validation.ConstraintViolationException
 
-import static com.mg.samartrent.property.ModelBuilder.generateUser
+import static com.mg.samartrent.user.ModelBuilder.generateUser
 
 /**
  * This tests suite is designed to ensure correctness of the model validation constraints.
@@ -56,6 +57,8 @@ class TestUserService extends IntegrationTestsSetup {
         dbUser.getEmail() == "test.user@domain.com"
         dbUser.getStatus() == EnUserStatus.Pending.name()
         dbUser.getPassword() != "12341234"
+        dbUser.getGender() == EnGender.Male.name()
+        dbUser.getDateOfBirth() != null
         passwordEncoder.matches("12341234", dbUser.getPassword())
 
     }
@@ -90,7 +93,7 @@ class TestUserService extends IntegrationTestsSetup {
         ""    | "findByTrackingId.arg0: must not be blank"
     }
 
-    def "test: find renter by email"() {
+    def "test: find user by email"() {
         when:
         dbUser = userService.save(generateUser())
         def user = userService.findByEmail(dbUser.getEmail())
@@ -106,7 +109,7 @@ class TestUserService extends IntegrationTestsSetup {
     }
 
     @Unroll
-    def "test: find renter by invalid email #value"() {
+    def "test: find user by invalid email #value"() {
         when:
         userService.findByEmail(value)
 
