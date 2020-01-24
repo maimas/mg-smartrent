@@ -47,6 +47,7 @@ class TestUtils {
         user.setEmail("test.user@domain.com")
         user.setPassword("12341234")
         user.setEnabled(true)
+        user.setGender(EnGender.Male.name())
         user.setStatus("for new user is set by service")
 
         return user
