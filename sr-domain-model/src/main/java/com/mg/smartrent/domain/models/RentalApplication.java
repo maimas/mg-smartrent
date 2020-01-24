@@ -35,6 +35,10 @@ public class RentalApplication extends BizItem {
     @NotNull
     private Date checkOutDate;
 
+    @NotNull
+    @ValueOfEnum(enumClass = EnCurrency.class)
+    private String status;
+
     public RentalApplication() {
 
     }
