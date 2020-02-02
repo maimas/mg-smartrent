@@ -1,8 +1,8 @@
-package com.mg.samartrent.property.integration.resource
+package com.mg.samartrent.user.integration.resource
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.mg.samartrent.property.TestUtils
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+import com.mg.samartrent.user.TestUtils
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication

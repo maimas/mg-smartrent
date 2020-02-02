@@ -1,7 +1,6 @@
-package com.mg.samartrent.property.integration.service
+package com.mg.samartrent.user.integration.service
 
-
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException
@@ -18,8 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean
 
 import javax.validation.ConstraintViolationException
 
-import static com.mg.samartrent.property.TestUtils.generateProperty
-import static com.mg.samartrent.property.TestUtils.generatePropertyListing
+import static com.mg.samartrent.user.TestUtils.generateProperty
+import static com.mg.samartrent.user.TestUtils.generatePropertyListing
 import static org.mockito.Mockito.when
 
 /**

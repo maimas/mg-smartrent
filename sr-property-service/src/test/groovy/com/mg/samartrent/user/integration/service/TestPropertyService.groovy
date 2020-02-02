@@ -1,6 +1,6 @@
-package com.mg.samartrent.property.integration.service
+package com.mg.samartrent.user.integration.service
 
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.enums.EnBuildingType
 import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 
-import static com.mg.samartrent.property.TestUtils.generateProperty
+import static com.mg.samartrent.user.TestUtils.generateProperty
 import static org.mockito.Mockito.when
 
 /**

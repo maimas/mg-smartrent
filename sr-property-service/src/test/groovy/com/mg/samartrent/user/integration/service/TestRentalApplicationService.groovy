@@ -1,15 +1,13 @@
-package com.mg.samartrent.property.integration.service
+package com.mg.samartrent.user.integration.service
 
 import com.mg.samartrent.property.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.enums.EnCurrency
 import com.mg.smartrent.domain.models.Property
-import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException
 import com.mg.smartrent.domain.validation.ModelValidationException
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.service.ExternalUserService
-import com.mg.smartrent.property.service.PropertyListingService
 import com.mg.smartrent.property.service.PropertyService
 import com.mg.smartrent.property.service.RentalApplicationService
 import org.mockito.InjectMocks
@@ -21,7 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import javax.validation.ConstraintViolationException
 
 import static com.mg.samartrent.property.TestUtils.generateProperty
-import static com.mg.samartrent.property.TestUtils.generatePropertyListing
 import static com.mg.samartrent.property.TestUtils.generateRentalApplication
 import static org.mockito.Mockito.when
 

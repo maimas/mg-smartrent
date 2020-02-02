@@ -1,4 +1,4 @@
-package com.mg.samartrent.property.unit
+package com.mg.samartrent.user.unit
 
 import com.mg.persistence.service.QueryService
 import com.mg.smartrent.domain.models.PropertyListing
@@ -17,8 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.mg.samartrent.property.TestUtils.generateProperty
-import static com.mg.samartrent.property.TestUtils.generatePropertyListing
+import static com.mg.samartrent.user.TestUtils.generateProperty
+import static com.mg.samartrent.user.TestUtils.generatePropertyListing
 import static java.lang.System.currentTimeMillis
 import static org.mockito.Mockito.when
 

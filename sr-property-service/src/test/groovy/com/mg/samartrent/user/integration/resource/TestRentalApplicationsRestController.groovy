@@ -1,14 +1,12 @@
-package com.mg.samartrent.property.integration.resource
+package com.mg.samartrent.user.integration.resource
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.mg.samartrent.property.TestUtils
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+import com.mg.samartrent.user.TestUtils
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Property
-import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.resource.PropertyListingRestController
 import com.mg.smartrent.property.resource.RentalApplicationRestController
 import com.mg.smartrent.property.service.ExternalUserService
 import com.mg.smartrent.property.service.PropertyService
@@ -24,7 +22,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import spock.lang.Stepwise
 
 import static org.mockito.Mockito.when
 
@@ -51,13 +48,14 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
     private RentalApplicationService rentalApplicationService
 
     static boolean initialized
-
+    static String endpointURL;
 
     /**
      * Spring beans cannot be initialized in setupSpec : https://github.com/spockframework/spock/issues/76
      */
     def setup() {
         if (!initialized) {
+            endpointURL = "http://localhost:$port/rest/rentalapplications"
             purgeCollection(User.class)
             purgeCollection(Property.class)
             purgeCollection(RentalApplication.class)
@@ -85,7 +83,7 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         createRentalApplication(property)
 
         when:
-        def url = "http://localhost:$port/rest/rentalapplications?propertyTID=${property.getTrackingId()}"
+        def url = "$endpointURL?propertyTID=${property.getTrackingId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -113,7 +111,7 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         createRentalApplication(property)
 
         when:
-        def url = "http://localhost:$port/rest/rentalapplications?renterUserTID=${property.getUserTID()}"
+        def url = "$endpointURL?renterUserTID=${property.getUserTID()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -138,7 +136,7 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
     def "test: get by in-existent propertyTID"() {
 
         when:
-        def url = "http://localhost:$port/rest/rentalapplications?propertyTID=inExistent"
+        def url = "$endpointURL?propertyTID=inExistent"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -154,7 +152,7 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         createRentalApplication(property, rentApplicTrackingID)
 
         when:
-        def url = "http://localhost:$port/rest/rentalapplications/${rentApplicTrackingID}"
+        def url = "$endpointURL/${rentApplicTrackingID}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -193,8 +191,7 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         rentalApplication.setPropertyTID(property.getTrackingId())
         rentalApplication.setRenterUserTID(property.getUserTID())
 
-        def url = "http://localhost:$port/rest/rentalapplications"
-        def response = doPost(mockMvc, url, rentalApplication).getResponse()
+        def response = doPost(mockMvc, endpointURL, rentalApplication).getResponse()
 
         return response
     }

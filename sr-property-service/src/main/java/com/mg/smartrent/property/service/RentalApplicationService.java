@@ -2,6 +2,8 @@ package com.mg.smartrent.property.service;
 
 
 import com.mg.persistence.service.QueryService;
+import com.mg.smartrent.domain.enrichment.ModelEnricher;
+import com.mg.smartrent.domain.enums.EnRentalApplicationStatus;
 import com.mg.smartrent.domain.models.RentalApplication;
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
@@ -14,7 +16,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-import static com.mg.smartrent.domain.enrichment.ModelEnricher.enrich;
 import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 
 @Service
@@ -64,5 +65,15 @@ public class RentalApplicationService {
         return queryService.findAllBy("propertyTID", propertyTID, RentalApplication.class);
     }
 
+
+    //-----------------Private Methods-------------------
+
+    public void enrich(RentalApplication model) {
+
+        if (model.getTrackingId() == null) {
+            model.setStatus(EnRentalApplicationStatus.PendingOwnerReview.name());
+        }
+        ModelEnricher.enrich(model);
+    }
 
 }

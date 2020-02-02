@@ -1,4 +1,4 @@
-package com.mg.samartrent.property
+package com.mg.samartrent.user
 
 import com.mg.smartrent.domain.enums.EnBuildingType
 import com.mg.smartrent.domain.enums.EnCurrency
