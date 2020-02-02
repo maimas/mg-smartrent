@@ -25,7 +25,6 @@ public class Renter extends BizItem {
     @Size(min = 1, max = 100)
     public String lastName;
 
-    @NotNull
     @Past
     public Date dateOfBirth;
 
@@ -34,7 +33,6 @@ public class Renter extends BizItem {
     @Size(min = 1, max = 100)
     public String email;
 
-    @NotNull
     @Size(min = 1, max = 100)
     @PhoneNumber
     public String phoneNumber;
