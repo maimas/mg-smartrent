@@ -6,6 +6,7 @@ import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.Renter
+import com.mg.smartrent.domain.models.RenterReview
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.renter.service.RenterService
 import org.apache.commons.lang.RandomStringUtils
@@ -64,6 +65,16 @@ class TestUtils {
         renter.setEmail(RandomStringUtils.randomAlphabetic(5) + ".test@domain.com")
 
         return renter
+    }
+
+    static RenterReview generateRenterReview() {
+        RenterReview review = new RenterReview()
+        review.setUserTID(RandomStringUtils.randomAlphabetic(30))
+        review.setRenterTID(RandomStringUtils.randomAlphabetic(30))
+        review.setRating(1)
+        review.setReview("A very good renter!!!")
+
+        return review
     }
 
 

@@ -7,6 +7,7 @@ import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.renter.RenterApplication
 import com.mg.smartrent.renter.service.ExternalUserService
 import com.mg.smartrent.renter.service.RenterService
+import org.apache.commons.lang.RandomStringUtils
 import org.mockito.InjectMocks
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -14,9 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 
-/**
- * This tests suite is designed to ensure correctness of the model validation constraints.
- */
+import static com.mg.samartrent.renter.TestUtils.generateRenter
+
 
 @SpringBootTest(classes = RenterApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -44,7 +44,7 @@ class TestRenterService extends IntegrationTestsSetup {
     def "test: create renter"() {
 
         setup:
-        Renter renter = TestUtils.generateRenter()
+        Renter renter = generateRenter()
 
         when: "saving "
 
@@ -64,7 +64,7 @@ class TestRenterService extends IntegrationTestsSetup {
 
     def "test: find renter by email"() {
         setup:
-        Renter renter = renterService.save(TestUtils.generateRenter())
+        Renter renter = renterService.save(generateRenter())
 
         when:
         def dbRenter = renterService.findByEmail(renter.getEmail(), false)
@@ -75,6 +75,19 @@ class TestRenterService extends IntegrationTestsSetup {
         dbRenter.getEmail() == renter.getEmail()
     }
 
+    def "test: find renter by trackingId"() {
+        setup:
+        Renter renter = generateRenter();
+        renter.setTrackingId(RandomStringUtils.randomAlphabetic(30));
+        renter = renterService.save()
+
+        when:
+        def dbRenter = renterService.findByTrackingId(renter.getTrackingId())
+
+        then:
+        dbRenter != null
+        dbRenter.getTrackingId() == renter.getTrackingId()
+    }
 
     def "test: find renter by email when user exists"() {
         setup: "create an user that has not renter profile yet"
@@ -117,6 +130,5 @@ class TestRenterService extends IntegrationTestsSetup {
         RuntimeException e = thrown()
         e.getMessage() == "Renter could not be created. User with email $userEmail not found."
     }
-
 
 }

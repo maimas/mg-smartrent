@@ -3,6 +3,7 @@ package com.mg.smartrent.renter.service;
 
 import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.models.Renter;
+import com.mg.smartrent.domain.models.RenterReview;
 import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import org.apache.logging.log4j.LogManager;
@@ -52,6 +53,12 @@ public class RenterService {
         return renter;
     }
 
+    public Renter findByTrackingId(@NotNull String trackingId) {
+        List<Renter> renters = queryService.findAllBy("trackingId", trackingId, Renter.class);
+        return (renters != null && !renters.isEmpty()) ? renters.get(0) : null;
+    }
+
+    //----------------Private Methods------------------------------
     private Renter buildRenterFromUser(String userEmail) {
         User user = userService.getUserByEmail(userEmail);
         if (user == null) {
