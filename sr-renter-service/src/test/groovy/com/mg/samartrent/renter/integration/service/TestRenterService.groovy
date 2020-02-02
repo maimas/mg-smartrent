@@ -64,10 +64,16 @@ class TestRenterService extends IntegrationTestsSetup {
 
     def "test: find renter by email"() {
         setup:
-        Renter renter = renterService.save(generateRenter())
+        Renter renter = generateRenter()
 
-        when:
-        def dbRenter = renterService.findByEmail(renter.getEmail(), false)
+        when: "renter not present"
+        def dbRenter = renterService.findByEmail(renter.getEmail())
+        then:
+        dbRenter == null
+
+        when: "renter present"
+        renterService.save(renter)
+        dbRenter = renterService.findByEmail(renter.getEmail())
 
         then:
         dbRenter != null
@@ -75,60 +81,60 @@ class TestRenterService extends IntegrationTestsSetup {
         dbRenter.getEmail() == renter.getEmail()
     }
 
+
     def "test: find renter by trackingId"() {
         setup:
         Renter renter = generateRenter();
         renter.setTrackingId(RandomStringUtils.randomAlphabetic(30));
-        renter = renterService.save()
 
-        when:
+        when: "not present"
         def dbRenter = renterService.findByTrackingId(renter.getTrackingId())
+        then:
+        dbRenter == null
+
+        when: "present"
+        renterService.save(renter)
+        dbRenter = renterService.findByTrackingId(renter.getTrackingId())
 
         then:
         dbRenter != null
         dbRenter.getTrackingId() == renter.getTrackingId()
     }
 
-    def "test: find renter by email when user exists"() {
-        setup: "create an user that has not renter profile yet"
-        User user = TestUtils.generateUser()
+//    def "test: find renter by email when user exists"() {
+//        setup: "create an user that has not renter profile yet"
+//        User user = TestUtils.generateUser()
+//
+//        MockitoAnnotations.initMocks(this)
+//        Mockito.when(userService.getUserByEmail(user.getEmail())).thenReturn(user)
+//
+//        when: "searching renter by user email and it does not exists then should be created from user"
+//        def dbRenter = renterService.findByEmail(user.getEmail(), true)
+//
+//        then:
+//        dbRenter != null
+//        dbRenter.getTrackingId() != null
+//        dbRenter.getFirstName() == user.getFirstName()
+//        dbRenter.getLastName() == user.getLastName()
+//        dbRenter.getDateOfBirth() == user.getDateOfBirth()
+//        dbRenter.getGender() == user.getGender()
+//        dbRenter.getEmail() == user.getEmail()
+//        dbRenter.getPhoneNumber() == null
+//    }
 
-        MockitoAnnotations.initMocks(this)
-        Mockito.when(userService.getUserByEmail(user.getEmail())).thenReturn(user)
 
-        when: "searching renter by user email and it does not exists then should be created from user"
-        def dbRenter = renterService.findByEmail(user.getEmail(), true)
-
-        then:
-        dbRenter != null
-        dbRenter.getTrackingId() != null
-        dbRenter.getFirstName() == user.getFirstName()
-        dbRenter.getLastName() == user.getLastName()
-        dbRenter.getDateOfBirth() == user.getDateOfBirth()
-        dbRenter.getGender() == user.getGender()
-        dbRenter.getEmail() == user.getEmail()
-        dbRenter.getPhoneNumber() == null
-    }
-
-    def "test: find renter by email with create renter on missing set to False"() {
-        when:
-        def dbRenter = renterService.findByEmail("test.test@domain.com", false)
-        then:
-        dbRenter == null
-    }
-
-    def "test: find renter by email when user does not exists"() {
-        setup:
-        def userEmail = "non.existentEmail@domain.com"
-        MockitoAnnotations.initMocks(this)
-        Mockito.when(userService.getUserByEmail(userEmail)).thenReturn(null)
-
-        when: "searching renter by user email and user does not exists "
-        renterService.findByEmail(userEmail, true)
-
-        then: "exception is thrown"
-        RuntimeException e = thrown()
-        e.getMessage() == "Renter could not be created. User with email $userEmail not found."
-    }
+//    def "test: find renter by email when user does not exists"() {
+//        setup:
+//        def userEmail = "non.existentEmail@domain.com"
+//        MockitoAnnotations.initMocks(this)
+//        Mockito.when(userService.getUserByEmail(userEmail)).thenReturn(null)
+//
+//        when: "searching renter by user email and user does not exists "
+//        renterService.findByEmail(userEmail, true)
+//
+//        then: "exception is thrown"
+//        RuntimeException e = thrown()
+//        e.getMessage() == "Renter could not be created. User with email $userEmail not found."
+//    }
 
 }

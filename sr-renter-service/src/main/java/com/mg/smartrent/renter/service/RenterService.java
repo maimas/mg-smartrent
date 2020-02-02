@@ -42,15 +42,13 @@ public class RenterService {
         return renter;
     }
 
-    public Renter findByEmail(@NotNull @Email String email, boolean createOnMissing) throws ModelValidationException {
+    public Renter findByEmail(@NotNull @Email String email) {
         List<Renter> renters = queryService.findAllBy("email", email, Renter.class);
-        Renter renter = (renters != null && !renters.isEmpty()) ? renters.get(0) : null;
+        return (renters != null && !renters.isEmpty()) ? renters.get(0) : null;
 
-        if (renter == null && createOnMissing) {
-            renter = save(buildRenterFromUser(email));
-        }
-
-        return renter;
+//        if (renter == null && createOnMissing) {
+//            renter = save(buildRenterFromUser(email));
+//        }
     }
 
     public Renter findByTrackingId(@NotNull String trackingId) {
@@ -59,18 +57,18 @@ public class RenterService {
     }
 
     //----------------Private Methods------------------------------
-    private Renter buildRenterFromUser(String userEmail) {
-        User user = userService.getUserByEmail(userEmail);
-        if (user == null) {
-            throw new RuntimeException(String.format("Renter could not be created. User with email %s not found.", userEmail));
-        }
-        Renter renter = new Renter();
-        renter.setDateOfBirth(user.dateOfBirth);
-        renter.setFirstName(user.getFirstName());
-        renter.setLastName(user.getLastName());
-        renter.setEmail(user.getEmail());
-        renter.setGender(user.getGender());
-
-        return renter;
-    }
+//    private Renter buildRenterFromUser(String userEmail) {
+//        User user = userService.getUserByEmail(userEmail);
+//        if (user == null) {
+//            throw new RuntimeException(String.format("Renter could not be created. User with email %s not found.", userEmail));
+//        }
+//        Renter renter = new Renter();
+//        renter.setDateOfBirth(user.dateOfBirth);
+//        renter.setFirstName(user.getFirstName());
+//        renter.setLastName(user.getLastName());
+//        renter.setEmail(user.getEmail());
+//        renter.setGender(user.getGender());
+//
+//        return renter;
+//    }
 }
