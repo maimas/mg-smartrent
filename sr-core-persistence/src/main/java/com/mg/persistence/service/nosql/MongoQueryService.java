@@ -34,6 +34,10 @@ public class MongoQueryService<T> implements QueryService<T> {
         return mongoTemplate.find(query, entityClass, entityClass.getSimpleName());
     }
 
+    public long count(Query query, Class<T> entityClass) {
+        return mongoTemplate.count(query, entityClass, entityClass.getSimpleName());
+    }
+
     public T save(T model) {
         return mongoTemplate.save(model, model.getClass().getSimpleName());
     }
@@ -41,4 +45,5 @@ public class MongoQueryService<T> implements QueryService<T> {
     public void save(List<T> models) {
         models.forEach(this::save);
     }
+
 }

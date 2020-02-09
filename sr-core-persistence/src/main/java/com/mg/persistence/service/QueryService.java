@@ -53,5 +53,12 @@ public interface QueryService<T> {
      */
     void save(List<T> models);
 
+    /**
+     * Count number of the records
+     *
+     * @param query -count criteria
+     * @return - count of records that matches the search criteria.
+     */
+    long count(Query query, Class<T> entityClass);
 
 }
