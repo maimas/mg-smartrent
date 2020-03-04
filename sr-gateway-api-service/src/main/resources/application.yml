@@ -13,3 +13,11 @@ eureka:
     fetch-registry: false
     service-url:
       defaultZone: http://localhost:8081/eureka
+
+##------------------------------------------------------------------
+##------GATEWAY API SECURITY (default user:user)--------------------
+##------------------------------------------------------------------
+spring:
+  security:
+    user:
+      password: 12341234

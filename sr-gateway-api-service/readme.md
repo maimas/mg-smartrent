@@ -1,38 +1,132 @@
-# Read Me First
-The following was discovered as part of building this project:
+# Gateway API Service
 
-* The original package name 'com.mg.smartrent.gateway-api' is invalid and this project uses 'com.mg.smartrent.gatewayapi' instead.
+This projects represents the Application gateway API - meaning all the requests will pass trough this gateway than routed to the target services. 
+All te internal services communication will also happen trough the Gateway API. 
 
-# Getting Started
+## Built With
 
-### Reference Documentation
-For further reference, please consider the following sections:
+* 	[Gradle](https://gradle.com/) - Dependency Management
+* 	[JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - Java™ Platform, Standard Edition Development Kit 
+* 	[Spring Boot](https://spring.io/projects/spring-boot) - Framework to ease the bootstrapping and development of new Spring Applications
+* 	[Git](https://git-scm.com/) - Free and Open-Source distributed version control system 
+* 	[Lombok](https://projectlombok.org/) - Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
+* 	[Netflix Eureka](https://spring.io/guides/gs/service-registration-and-discovery/) - Netflix Eureka service registry.
+* 	[Docker](https://www.docker.com/) - Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers..
 
-* [Official Gradle documentation](https://docs.gradle.org)
-* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.2.2.RELEASE/gradle-plugin/reference/html/)
+## To-Do
 
-### Guides
-The following guides illustrate how to use some features concretely:
+- [x] Eureka Server Configuration
+- [x] Eureka Dashboard
+- [x] Docker
+- [x] Logger (Console, File)
+- [ ] Security
+- [ ] Distributed Logging
+- [ ] RESTful Web Service (CRUD)
+- [ ] NoSQL (MongoDB)
 
-* [Service Registration and Discovery](https://spring.io/guides/gs/service-registration-and-discovery/)
-* [Routing and Filtering](https://spring.io/guides/gs/routing-and-filtering/)
+## Running the application locally
 
-### Additional Links
-These additional references should also help you:
+There are several ways to run a this application on your local machine.
+One way is to execute the `main` method in the `com.mg.smartrent.gatewayapi.GatewayApiApplication` class from your IDE.
 
-* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
-# Spring Cloud Netflix Maintenance Mode
+Alternatively you can use the gradle to run the project:
 
-The dependencies listed below are in maintenance mode. We do not recommend adding them to
-new projects:
+```shell
+gradlew run
+```
 
-*  Zuul
+Or you can build the Docker image. Open CMD and navigation to project root folder, then run 
+ * ``docker build -t sr-gateway-api .`` - this will create docker image of the application 
+ * ``docker run -d -p 8081:8081 sr-gateway-api`` - this will run docker container with the created image
 
-The decision to move most of the Spring Cloud Netflix projects to maintenance mode was
-a response to Netflix not continuing maintenance of many of the libraries that we provided
-support for.
+### Security
+Spring Boot Starter Security default username is `user` and password ``12341234``
+ - Note: this will change in the future - replaced with a security provider 
 
-Please see [this blog entry](https://spring.io/blog/2018/12/12/spring-cloud-greenwich-rc1-available-now#spring-cloud-netflix-projects-entering-maintenance-mode)
-for more information on maintenance mode and a list of suggested replacements for those
-libraries.
+### Actuator
+
+To monitor and manage your application
+
+|  URL |  Method |
+|----------|--------------|
+|`http://localhost:8081`  						| GET |
+|`http://localhost:8080/actuator/health`    	| GET |
+|`http://localhost:8080/actuator/info`      	| GET |
+| These are not available 
+|`http://localhost:8080/actuator/actuator`  | GET |
+|`http://localhost:8080/actuator/prometheus`| GET |
+|`http://localhost:8080/actuator/httptrace` | GET |
+
+### URLs (not available)
+
+|  URL |  Method | Remarks |
+|----------|--------------|--------------|
+|`http://localhost:8080/bw/tech-stack`                           | GET | Custom Response Headers|
+|`http://localhost:8080/api/generic-hello`                       | GET | |
+|`http://localhost:8080/api/personalized-hello/`                 | GET | |
+|`http://localhost:8080/api/personalized-hello?name=spring-boot` | GET | |
+|`http://localhost:8080/api/loggers`                             | GET | |
+
+
+## Documentation
+
+* [TBD](https://documenter.getpostman.com/view/2449187/RWTiwzb2) - TBD
+
+## Files and Directories
+
+The project (a.k.a. project directory) has a particular directory structure. A representative project is shown below:
+
+```
+GENERATED BY RINING: tree /A  sr-gateway-api-service
+.
+\---src
+    +---main
+    |   +---java
+    |   |   \---com
+    |   |       \---mg
+    |   |           \---smartrent
+    |   |               \---gatewayapi
+    |   \---resources
+    \---test
+        \---java
+            \---com
+                \---mg
+                    \---smartrent
+                        \---gatewayapi
+
+```
+
+## packages
+
+- `models` — to hold our entities;
+- `repositories` — to communicate with the database;
+- `services` — to hold our business logic;
+- `controllers` — to listen to the client;
+
+- `resources/application.properties` - It contains application-wide properties. Spring reads the properties defined in this file to configure your application. You can define server’s default port, server’s context path, database URLs etc, in this file.
+
+- `test/` - contains unit and integration tests
+
+- `build.gradle` - contains all the project dependencies
+ 
+## Reporting Issues
+
+This Project uses GitHub's integrated issue tracking system to record bugs and feature requests. If you want to raise an issue, please follow the recommendations below:
+
+* Before you log a bug, please https://github.com/maimas/mg-smartrent/issues [search the issue tracker]
+  to see if someone has already reported the problem.
+* If the issue doesn't already exist, https://github.com/maimas/mg-smartrent/issues/new[create a new issue]. 
+* Please provide as much information as possible with the issue report.
+* If you need to paste code, or include a stack trace use Markdown +++```+++ escapes before and after your text. 
+  
+## Resources
+
+* [My API Lifecycle Checklist and Scorecard](https://dzone.com/articles/my-api-lifecycle-checklist-and-scorecard)
+* [HTTP Status Codes](https://www.restapitutorial.com/httpstatuscodes.html)
+* [Common application properties](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html)
+
+
+## License
+TBD
+<!--[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSpring-Boot-Framework%2FSpring-Boot-Application-Template.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FSpring-Boot-Framework%2FSpring-Boot-Application-Template?ref=badge_large)-->
