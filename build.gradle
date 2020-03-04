@@ -1,4 +1,5 @@
 plugins {
+    id "net.linguica.maven-settings" version "0.5" apply(false)
     id 'org.springframework.boot' version '2.2.2.RELEASE' apply(false)
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
@@ -10,23 +11,28 @@ ext {
 group = 'com.maigroup.smartrent'
 subprojects {
 
-//    apply plugin: 'application'
     apply plugin: 'java'
     apply plugin: 'groovy'
+    apply plugin: 'application'
+    apply plugin: "io.spring.dependency-management"
+    apply plugin: 'net.linguica.maven-settings'
     sourceCompatibility = 1.8
 
 
     repositories {
-        //TODO: remove maven local and fetch the dependencies from GitHub repository (parse maven settings.xml to get the credentials).
-        mavenLocal()
+        maven {
+            name = "github" // must be equal to id in ~/.m2/settings.xml file!
+            url = uri("https://maven.pkg.github.com/maimas/mg-smartrent")
+        }
         mavenCentral()
+        mavenLocal()
     }
 
 
     dependencies {
-        implementation "com.google.guava:guava:${project['google-guava.version']}"
         implementation "com.mg.platform:persistence:${project['mg-persistence.version']}"
         implementation "com.mg.smartrent:domain-model:${project['mg-domain-model.version']}"
+        implementation "com.google.guava:guava:${project['google-guava.version']}"
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -40,19 +46,18 @@ subprojects {
         testImplementation(group: 'org.spockframework', name: 'spock-spring', version: "${project['spockframework.verson']}")
     }
 
-    apply plugin: "io.spring.dependency-management"
-
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
         }
     }
 }
 
 def manifestAttributes(String projectName, String mainClass) {
-    println('> -------------------------------------------------')
-    println('> PROJECT    : ' + projectName)
-    println('> ENTRY-CLASS: ' + mainClass)
+    println('-------------------------------------------------')
+    println(' PROJECT    : ' + projectName)
+    println(' ENTRY-CLASS: ' + mainClass)
     return [
             'Specification-Title'     : projectName,
             'Main-Class'              : mainClass,
