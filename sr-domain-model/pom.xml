@@ -19,7 +19,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Renter</name>
-            <url>https://maven.pkg.github.com/maimas/mg-smartrent/domain-model</url>
+            <url>https://maven.pkg.github.com/maimas/mg-smartrent</url>
         </repository>
     </distributionManagement>
 
