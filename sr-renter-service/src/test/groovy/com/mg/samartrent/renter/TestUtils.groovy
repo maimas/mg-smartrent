@@ -7,6 +7,7 @@ import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.Renter
 import com.mg.smartrent.domain.models.RenterReview
+import com.mg.smartrent.domain.models.RenterView
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.renter.service.RenterService
 import org.apache.commons.lang.RandomStringUtils
@@ -77,5 +78,11 @@ class TestUtils {
         return review
     }
 
+    static RenterView generateRenterView() {
+        RenterView view = new RenterView()
+        view.setUserTID(RandomStringUtils.randomAlphabetic(30))
+        view.setRenterTID(RandomStringUtils.randomAlphabetic(30))
+        return view
+    }
 
 }

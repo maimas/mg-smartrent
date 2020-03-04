@@ -3,9 +3,11 @@ package com.mg.smartrent.renter.resource;
 
 import com.mg.smartrent.domain.models.Renter;
 import com.mg.smartrent.domain.models.RenterReview;
+import com.mg.smartrent.domain.models.RenterView;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import com.mg.smartrent.renter.service.RenterReviewService;
 import com.mg.smartrent.renter.service.RenterService;
+import com.mg.smartrent.renter.service.RenterViewsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +20,12 @@ public class RenterRestController {
 
     private final RenterService renterService;
     private final RenterReviewService reviewService;
+    private final RenterViewsService viewsService;
 
-    public RenterRestController(RenterService renterService, RenterReviewService reviewService) {
+    public RenterRestController(RenterService renterService, RenterReviewService reviewService, RenterViewsService viewsService) {
         this.renterService = renterService;
         this.reviewService = reviewService;
+        this.viewsService = viewsService;
     }
 
 
@@ -45,6 +49,17 @@ public class RenterRestController {
     @GetMapping("/{renterTID}/reviews")
     public ResponseEntity<List<RenterReview>> getRenterReviews(@PathVariable String renterTID) {
         return new ResponseEntity<>(reviewService.findByRenterTID(renterTID), HttpStatus.OK);
+    }
+
+    @PostMapping("/{renterTID}/views")
+    public ResponseEntity saveRenterView(@PathVariable String renterTID, @RequestBody RenterView renterView) throws ModelValidationException {
+        viewsService.save(renterView);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{renterTID}/views")
+    public ResponseEntity<Long> getRenterViewsCount(@PathVariable String renterTID) {
+        return new ResponseEntity<>(viewsService.count(renterTID), HttpStatus.OK);
     }
 
 }

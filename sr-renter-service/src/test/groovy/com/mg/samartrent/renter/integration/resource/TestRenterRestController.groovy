@@ -144,6 +144,25 @@ class TestRenterRestController extends IntegrationTestsSetup {
         dbReviews.size() == 1
     }
 
+    def "test: save renter View"() {
+        setup:
+        def view = generateRenterView();
+        def url = "http://localhost:$port/rest/renters/${view.renterTID}/views"
+
+        when: "save view"
+        def response = doPost(mockMvc, url, view).getResponse()
+        then: "success"
+        response.status == HttpStatus.OK.value()
+        response.getContentAsString() == ""
+
+        when: "count renter views"
+        MvcResult result = doGet(mockMvc, url)
+        then: "total views = 1"
+        result.getResponse().getStatus() == HttpStatus.OK.value()
+        mvcResultToModel(result, Long.class) == 1
+
+    }
+
 
     private mockServicesFor(RenterReview review) {
         MockitoAnnotations.initMocks(this)
