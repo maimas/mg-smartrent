@@ -13,8 +13,9 @@ spring:
 ##------------------------------------------------------------------
 eureka:
   client:
+    registerWithEureka: true
+    fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8081/eureka
+      defaultZone: http://admin:12341234@localhost:8081/eureka
     healthcheck:
       enabled: true
-

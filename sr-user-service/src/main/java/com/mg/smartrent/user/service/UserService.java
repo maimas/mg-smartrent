@@ -4,6 +4,7 @@ import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.enums.EnUserStatus;
 import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 
 @Service
 @Validated
+@Log4j2
 public class UserService {
 
     private QueryService<User> queryService;
@@ -31,7 +33,7 @@ public class UserService {
 
 
     public User save(@NotNull User model) throws ModelValidationException {
-
+        log.info("Saving user: " + model.getEmail());
         if (model.getId() == null) {//new user
             if (StringUtils.isBlank(model.getPassword())) {
                 throw new ModelValidationException("User could not be saved. Password not specified.");
@@ -49,11 +51,13 @@ public class UserService {
     }
 
     public User findByTrackingId(@NotNull @NotBlank String trackingId) {
+        log.info("Searching user by trackingId: " + trackingId);
         return queryService.findOneBy("trackingId", trackingId, User.class);
     }
 
 
     public User findByEmail(@NotNull @NotBlank @Email String email) {
+        log.info("Searching user by trackingId: " + email);
         return queryService.findOneBy("email", email, User.class);
     }
 

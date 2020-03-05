@@ -1,19 +1,46 @@
+mainClassName = 'com.mg.smartrent.property.PropertyApplication'
+
 jar {
-    version = '1.0.0-SNAPSHOT'
-
-}
-
-dependencies {
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    manifest {
+        attributes manifestAttributes('Property Service', mainClassName)
     }
 }
 
+dependencies {
+    implementation "com.mg.platform:persistence:${project['mg-persistence.version']}"
+    implementation "com.mg.smartrent:domain-model:${project['mg-domain-model.version']}"
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+}
 
 test {
     maxHeapSize = '1G'
+}
+
+/**
+ * Enhances the build stage with generation of a new post build directory that will hold unzipped distribution.
+ * Needed for docker image generation
+ */
+build {
+    doLast {
+        def targetDistDir = new File("$buildDir/distributions-docker")
+        def windArchive = new File("$buildDir/distributions").listFiles().find { it.name.endsWith(".zip") }
+        copy {
+            from zipTree(windArchive)
+            into targetDistDir
+        }
+        def unzippedDir = targetDistDir.listFiles()[0]
+        unzippedDir.renameTo(new File(targetDistDir, 'app'))
+    }
+}
+
+/**
+ * Workaround for Wind distribution.
+ * Replace classpath libs definition with a folder location that contains all the libs to obtain a shorten value.
+ */
+tasks.withType(CreateStartScripts).each { task ->
+    task.doLast {
+        task.windowsScript.write task.windowsScript.text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
+        task.unixScript.write task.unixScript.text.replaceFirst(/(CLASSPATH=.APP_HOME\/lib\/).*/, { "CLASSPATH=\$(echo \$APP_HOME/lib/*.jar | tr ' ' ':')" })
+    }
 }
