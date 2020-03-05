@@ -1,7 +1,7 @@
 plugins {
-    id "net.linguica.maven-settings" version "0.5" apply(false)
-    id 'org.springframework.boot' version '2.2.2.RELEASE' apply(false)
+    id 'org.springframework.boot' version '2.2.4.RELEASE' apply(false)
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+    id "net.linguica.maven-settings" version "0.5" apply(false)
 }
 
 ext {
@@ -9,15 +9,16 @@ ext {
 }
 
 group = 'com.maigroup.smartrent'
-subprojects {
 
+subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     apply plugin: 'application'
     apply plugin: "io.spring.dependency-management"
     apply plugin: 'net.linguica.maven-settings'
-    sourceCompatibility = 1.8
 
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         maven {
@@ -30,12 +31,12 @@ subprojects {
 
 
     dependencies {
-        implementation "com.mg.platform:persistence:${project['mg-persistence.version']}"
-        implementation "com.mg.smartrent:domain-model:${project['mg-domain-model.version']}"
+        //todo: mode those dependencies to appropriate modules -
+        // this should not be enherited by all the modules as it is not always necessary
         implementation "com.google.guava:guava:${project['google-guava.version']}"
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
-        implementation 'org.springframework.boot:spring-boot-starter-security'
+//        implementation 'org.springframework.boot:spring-boot-starter-security'
 
         testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
             exclude module: "spring-boot-starter-logging"

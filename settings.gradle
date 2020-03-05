@@ -1,5 +1,6 @@
 rootProject.name = 'smartrent'
 
+include 'sr-logs-aggregator-service'
 include 'sr-gateway-api-service'
 include 'sr-property-service'
 include 'sr-renter-service'
