@@ -3,6 +3,14 @@
 ##------------------------------------------------------------------
 server:
   port: 8081
+spring:
+  application:
+    name: gateway-api
+  security:
+    user:
+      name: admin
+      password: 12341234
+
 
 ##------------------------------------------------------------------
 ##------GATEWAY API CONFIGURATION-----------------------------------
@@ -12,12 +20,4 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://localhost:8081/eureka
-
-##------------------------------------------------------------------
-##------GATEWAY API SECURITY (default user:user)--------------------
-##------------------------------------------------------------------
-spring:
-  security:
-    user:
-      password: 12341234
+      defaultZone: http://admin:12341234@localhost:8081/eureka
