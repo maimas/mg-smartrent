@@ -26,6 +26,17 @@ All te internal services communication will also happen trough the Gateway API.
 - [ ] RESTful Web Service (CRUD)
 - [ ] NoSQL (MongoDB)
 
+
+## Running the tests
+Run command 
+```
+gradlew test
+``` 
+
+### Break down into end to end tests
+
+TO BE DONE
+
 ## Running the application locally
 
 There are several ways to run a this application on your local machine.
