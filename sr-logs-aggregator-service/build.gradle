@@ -1,0 +1,36 @@
+mainClassName = 'org.springframework.boot.loader.JarLauncher'
+
+jar {
+    manifest {
+        attributes manifestAttributes('Logs Aggregator Service', mainClassName)
+    }
+}
+
+dependencies {
+    implementation files('libs/zipkin-server-2.20.0-exec.jar')
+}
+
+/**
+ * Enhances the build stage with generation of a new post build directory that will deployment ready package.
+ * Needed for docker image generation
+ */
+build {
+    doLast {
+        new File("$buildDir/distributions").deleteDir()//delete to avoid confusions
+        new File("$buildDir/libs").deleteDir()
+
+        def targetDistDir = new File("$buildDir/distributions-docker")
+        def targetLibs = new File(targetDistDir, 'app/lib')
+        copy {
+            from "$buildDir/resources/main/libs"
+            into targetLibs
+        }
+
+        def targetBin = new File(targetDistDir, 'app/bin')
+        copy {
+            from "$buildDir/scripts"
+            into targetBin
+        }
+    }
+}
+
