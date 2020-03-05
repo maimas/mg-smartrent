@@ -42,6 +42,9 @@ Or you can build the Docker image. Open CMD and navigation to project root folde
  * ``docker build -t sr-gateway-api .`` - this will create docker image of the application 
  * ``docker run -d -p 8081:8081 sr-gateway-api`` - this will run docker container with the created image
 
+### UI:
+To access Eureka Service dashboard, navigate to http://your_host:8081
+
 ### Security
 Eureka server is secured with a preconfigured default user name and password.
 * UI: http://localhost:8081/
