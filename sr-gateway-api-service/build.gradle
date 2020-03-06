@@ -1,3 +1,10 @@
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.11.0'
+}
+
+scmVersion.repository.customUsername = project.findProperty("GITHUB_TOKEN") ?: null
+project.version = scmVersion.version
+
 mainClassName = 'com.mg.smartrent.gatewayapi.GatewayApiApplication'
 
 jar {
@@ -31,6 +38,21 @@ build {
         }
         def unzippedDir = targetDistDir.listFiles()[0]
         unzippedDir.renameTo(new File(targetDistDir, 'app'))
+    }
+}
+
+/**
+ * Build the Docker Image.
+ */
+task buildDocker(group: 'build', dependsOn: 'build') {
+    doLast {
+        def appName = "$project.name:$project.version"
+        def appPorts = "8081:8081"
+
+        println "docker build -t maimas/$appName .".execute().text.trim()
+        println "docker run -d -p $appPorts maimas/$appName".execute().text.trim()
+
+        println "docker images".execute().text.trim()
     }
 }
 
