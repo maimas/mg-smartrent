@@ -1,15 +1,11 @@
-plugins {
-    id 'pl.allegro.tech.build.axion-release' version '1.11.0'
-}
-
-scmVersion.repository.customUsername = project.findProperty("GITHUB_TOKEN") ?: null
+scmVersion.repository.customUsername = project.findProperty("GITHUB_TOKEN") ?: project.property('gitHubPass')
 project.version = scmVersion.version
 
 mainClassName = 'com.mg.smartrent.gatewayapi.GatewayApiApplication'
 
 jar {
     manifest {
-        attributes manifestAttributes('Smartrent Gateway API', mainClassName)
+        attributes manifestAttributes(mainClassName)
     }
 }
 
@@ -54,6 +50,7 @@ task buildDocker(group: 'build', dependsOn: 'build') {
 
         println "docker images".execute().text.trim()
     }
+
 }
 
 /**

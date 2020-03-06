@@ -2,7 +2,7 @@ mainClassName = 'com.mg.smartrent.property.PropertyApplication'
 
 jar {
     manifest {
-        attributes manifestAttributes('Property Service', mainClassName)
+        attributes manifestAttributes(mainClassName)
     }
 }
 

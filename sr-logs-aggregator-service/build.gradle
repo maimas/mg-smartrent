@@ -2,7 +2,7 @@ mainClassName = 'org.springframework.boot.loader.JarLauncher'
 
 jar {
     manifest {
-        attributes manifestAttributes('Logs Aggregator Service', mainClassName)
+        attributes manifestAttributes(mainClassName)
     }
 }
 

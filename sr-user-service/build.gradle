@@ -2,7 +2,7 @@ mainClassName = 'com.mg.smartrent.user.UserApplication'
 
 jar {
     manifest {
-        attributes manifestAttributes('User Service', mainClassName)
+        attributes manifestAttributes(mainClassName)
     }
 }
 

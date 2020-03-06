@@ -1,12 +1,25 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'cn.home1.tools:maven-settings-decoder:1.0.5.OSS'
+    }
+}
+
 plugins {
     id 'org.springframework.boot' version '2.2.4.RELEASE' apply(false)
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id "net.linguica.maven-settings" version "0.5" apply(false)
+    id 'pl.allegro.tech.build.axion-release' version '1.11.0' apply(false)
 }
 
-ext {
-    set('springCloudVersion', "Hoxton.SR1")
-}
+def mavenGitHubID = 'github'
+
+ext { set('springCloudVersion', "Hoxton.SR1") }
+ext.mavenSettings = new cn.home1.tools.maven.SettingsDecoder();
+ext.gitHubUser = ext.mavenSettings.getText("//server[id='${mavenGitHubID}']/username/text()")
+ext.gitHubPass = ext.mavenSettings.getText("//server[id='${mavenGitHubID}']/password/text()")
 
 group = 'com.maigroup.smartrent'
 
@@ -16,13 +29,14 @@ subprojects {
     apply plugin: 'application'
     apply plugin: "io.spring.dependency-management"
     apply plugin: 'net.linguica.maven-settings'
+    apply plugin: 'pl.allegro.tech.build.axion-release' //requires 'gitHubPass' in sub-projects
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
     repositories {
         maven {
-            name = "github" // must be equal to id in ~/.m2/settings.xml file!
+            name = mavenGitHubID // must be equal to id in ~/.m2/settings.xml file!
             url = uri("https://maven.pkg.github.com/maimas/mg-smartrent")
         }
         mavenCentral()
@@ -55,22 +69,23 @@ subprojects {
     }
 }
 
-def manifestAttributes(String projectName, String mainClass) {
-    println('-------------------------------------------------')
-    println(' PROJECT    : ' + projectName)
-    println(' ENTRY-CLASS: ' + mainClass)
+
+def manifestAttributes(String mainClass) {
+//    println('-------------------------------------------------')
+//    println(' PROJECT    : ' + projectName)
+//    println(' ENTRY-CLASS: ' + mainClass)
     return [
-            'Specification-Title'     : projectName,
-            'Main-Class'              : mainClass,
-            'Specification-Vendor'    : 'MaiGroup',
-            'Specification-Vendor-URL': 'http://www.maigroup.com',
-            'Specification-Version'   : version,
-            'Implementation-Title'    : group,
-            'Implementation-Vendor'   : 'MaiGroup',
-            'Implementation-URL'      : 'http://www.maigroup.com',
-            'Implementation-Version'  : version,
-            'Created-By'              : "${System.getProperty('java.version')} (${System.getProperty('java.specification.vendor')})",
-            'Built-By'                : System.getProperty("user.name"),
-            'Build-Date'              : (new Date()).format("Y-MM-dd H:m:s")
+//            'Specification-Title'     : projectName,
+'Main-Class'              : mainClass,
+'Specification-Vendor'    : 'MaiGroup',
+'Specification-Vendor-URL': 'http://www.maigroup.com',
+'Specification-Version'   : version,
+'Implementation-Title'    : group,
+'Implementation-Vendor'   : 'MaiGroup',
+'Implementation-URL'      : 'http://www.maigroup.com',
+'Implementation-Version'  : version,
+'Created-By'              : "${System.getProperty('java.version')} (${System.getProperty('java.specification.vendor')})",
+'Built-By'                : System.getProperty("user.name"),
+'Build-Date'              : (new Date()).format("Y-MM-dd H:m:s")
     ]
 }
