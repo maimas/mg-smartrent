@@ -33,7 +33,7 @@ subprojects {
     apply plugin: 'application'
     apply plugin: "io.spring.dependency-management"
     apply plugin: 'net.linguica.maven-settings'
-//    apply plugin: 'pl.allegro.tech.build.axion-release'
+    apply plugin: 'pl.allegro.tech.build.axion-release'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -98,21 +98,19 @@ def manifestAttributes(String mainClass) {
 
 def buildDockerImage(String imageName) {
     println "BUILDING DOCKER IMAGE : $imageName"
+    println "docker rmi -f $imageName".execute().text.trim()
     println "docker build -t $imageName .".execute().text.trim()
     println "docker images".execute().text.trim()
+}
 
+def releaseDockerImage(String imageName) {
+    println "RELEASING DOCKER IMAGE : $imageName"
     if (!imageName.toUpperCase().contains("SNAPSHOT")) {
         println "docker push $imageName".execute().text.trim()
     }
 }
 
+
 task runDckerizedServices(group: 'application') {
-//    subprojects.findAll { subproject ->
-//        {
-//            def task = subproject.tasks.find { t -> t.name == 'runDockerizedService' }
-//            if (task != null) {
-//                task.execute()
-//            }
-//        }
-//    }
+
 }

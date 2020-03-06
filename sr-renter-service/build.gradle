@@ -21,10 +21,9 @@ test {
     maxHeapSize = '1G'
 }
 
-/**
- * Enhances the build stage with generation of a new post build directory that will hold unzipped distribution.
- * Needed for docker image generation
- */
+def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
+def dockerExposedPorts = "8084:8084"
+
 build {
     doLast {
         def targetDistDir = new File("$buildDir/distributions-docker")
@@ -36,15 +35,22 @@ build {
         def unzippedDir = targetDistDir.listFiles()[0]
         unzippedDir.renameTo(new File(targetDistDir, 'app'))
     }
+    doLast {
+        buildDockerImage(dockerImageName)
+    }
 }
 
-/**
- * Workaround for Wind distribution.
- * Replace classpath libs definition with a folder location that contains all the libs to obtain a shorten value.
- */
-tasks.withType(CreateStartScripts).each { task ->
-    task.doLast {
-        task.windowsScript.write task.windowsScript.text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
-        task.unixScript.write task.unixScript.text.replaceFirst(/(CLASSPATH=.APP_HOME\/lib\/).*/, { "CLASSPATH=\$(echo \$APP_HOME/lib/*.jar | tr ' ' ':')" })
+release {
+    doLast {
+        releaseDockerImage(dockerImageName)
+    }
+}
+
+task runDockerContainer(group: 'application') {
+    doLast {
+        println "STARTING DOCKER CONTAINER FOR: $dockerImageName"
+
+        println "docker run -d -p $dockerExposedPorts $dockerImageName"
+        println "docker run -d -p $dockerExposedPorts $dockerImageName".execute().text.trim()
     }
 }

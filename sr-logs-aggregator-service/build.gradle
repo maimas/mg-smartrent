@@ -10,10 +10,9 @@ dependencies {
     implementation files('libs/zipkin-server-2.20.0-exec.jar')
 }
 
-/**
- * Enhances the build stage with generation of a new post build directory that will deployment ready package.
- * Needed for docker image generation
- */
+def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
+def dockerExposedPorts = "9411:9411"
+
 build {
     doLast {
         new File("$buildDir/distributions").deleteDir()//delete to avoid confusions
@@ -31,6 +30,25 @@ build {
             from "$buildDir/scripts"
             into targetBin
         }
+    }
+
+    doLast {
+        buildDockerImage(dockerImageName)
+    }
+}
+
+release {
+    doLast {
+        releaseDockerImage(dockerImageName)
+    }
+}
+
+task runDockerContainer(group: 'application') {
+    doLast {
+        println "STARTING DOCKER CONTAINER FOR: $dockerImageName"
+
+        println "docker run -d -p $dockerExposedPorts $dockerImageName"
+        println "docker run -d -p $dockerExposedPorts $dockerImageName".execute().text.trim()
     }
 }
 

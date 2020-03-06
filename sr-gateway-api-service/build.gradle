@@ -25,12 +25,8 @@ test {
 def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
 def dockerExposedPorts = "8081:8081"
 
-/**
- * Enhances the build stage with generation of a new post build directory that will hold unzipped distribution.
- * Needed for docker image generation
- */
 build {
-    doLast {//create dist
+    doLast {
         def targetDistDir = new File("$buildDir/distributions-docker")
         def windArchive = new File("$buildDir/distributions").listFiles().find { it.name.endsWith(".zip") }
         copy {
@@ -40,18 +36,22 @@ build {
         def unzippedDir = targetDistDir.listFiles()[0]
         unzippedDir.renameTo(new File(targetDistDir, 'app'))
     }
-
-    doLast {//build docker image
+    doLast {
         buildDockerImage(dockerImageName)
     }
 }
 
-task runDockerizedService(group: 'application') {
+release {
+    doLast {
+        releaseDockerImage(dockerImageName)
+    }
+}
+
+task runDockerContainer(group: 'application') {
     doLast {
         println "STARTING DOCKER CONTAINER FOR: $dockerImageName"
-        println "docker rmi -f $dockerImageName".execute().text.trim()
 
-        println "docker run -d -p $dockerExposedPorts maimas/$dockerImageName"
-        println "docker run -d -p $dockerExposedPorts maimas/$dockerImageName".execute().text.trim()
+        println "docker run -d -p $dockerExposedPorts $dockerImageName"
+        println "docker run -d -p $dockerExposedPorts $dockerImageName".execute().text.trim()
     }
 }

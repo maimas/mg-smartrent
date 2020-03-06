@@ -1,6 +1,6 @@
 package com.mg.samartrent.user.integration.service
 
-import com.mg.samartrent.property.integration.IntegrationTestsSetup
+import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.enums.EnCurrency
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.RentalApplication
@@ -18,8 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean
 
 import javax.validation.ConstraintViolationException
 
-import static com.mg.samartrent.property.TestUtils.generateProperty
-import static com.mg.samartrent.property.TestUtils.generateRentalApplication
+import static com.mg.samartrent.user.TestUtils.generateProperty
+import static com.mg.samartrent.user.TestUtils.generateRentalApplication
 import static org.mockito.Mockito.when
 
 /**
