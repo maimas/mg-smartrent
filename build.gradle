@@ -11,17 +11,21 @@ plugins {
     id 'org.springframework.boot' version '2.2.4.RELEASE' apply(false)
     id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id "net.linguica.maven-settings" version "0.5" apply(false)
-    id 'pl.allegro.tech.build.axion-release' version '1.11.0' apply(false)
+    id 'pl.allegro.tech.build.axion-release' version '1.11.0'
 }
 
-def mavenGitHubID = 'github'
+project.group = 'com.maigroup.smartrent'
 
-ext { set('springCloudVersion', "Hoxton.SR1") }
-ext.mavenSettings = new cn.home1.tools.maven.SettingsDecoder();
+ext {
+    set('springCloudVersion', "Hoxton.SR1")
+}
+
+ext.dockerRepoName = 'maimas'
+ext.mavenGitHubID = 'github'
+ext.mavenSettings = new cn.home1.tools.maven.SettingsDecoder();//GIT token used during release task by the axon plugin
 ext.gitHubUser = ext.mavenSettings.getText("//server[id='${mavenGitHubID}']/username/text()")
 ext.gitHubPass = ext.mavenSettings.getText("//server[id='${mavenGitHubID}']/password/text()")
-
-group = 'com.maigroup.smartrent'
+scmVersion.repository.customUsername = ext.gitHubPass
 
 subprojects {
     apply plugin: 'java'
@@ -29,10 +33,11 @@ subprojects {
     apply plugin: 'application'
     apply plugin: "io.spring.dependency-management"
     apply plugin: 'net.linguica.maven-settings'
-    apply plugin: 'pl.allegro.tech.build.axion-release' //requires 'gitHubPass' in sub-projects
+//    apply plugin: 'pl.allegro.tech.build.axion-release'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+    project.version = scmVersion.version
 
     repositories {
         maven {
@@ -45,13 +50,6 @@ subprojects {
 
 
     dependencies {
-        //todo: mode those dependencies to appropriate modules -
-        // this should not be enherited by all the modules as it is not always necessary
-        implementation "com.google.guava:guava:${project['google-guava.version']}"
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-actuator'
-//        implementation 'org.springframework.boot:spring-boot-starter-security'
-
         testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
             exclude module: "spring-boot-starter-logging"
             exclude module: "logback-classic"
@@ -67,25 +65,54 @@ subprojects {
             mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
         }
     }
+
+    /**
+     * Workaround for Wind distribution.
+     * Replace classpath libs definition with a folder location that contains all the libs to obtain a shorten value.
+     */
+    tasks.withType(CreateStartScripts).each { task ->
+        task.doLast {
+            task.windowsScript.write task.windowsScript.text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
+            task.unixScript.write task.unixScript.text.replaceFirst(/(CLASSPATH=.APP_HOME\/lib\/).*/, { "CLASSPATH=\$(echo \$APP_HOME/lib/*.jar | tr ' ' ':')" })
+        }
+    }
 }
 
 
 def manifestAttributes(String mainClass) {
-//    println('-------------------------------------------------')
-//    println(' PROJECT    : ' + projectName)
-//    println(' ENTRY-CLASS: ' + mainClass)
     return [
-//            'Specification-Title'     : projectName,
-'Main-Class'              : mainClass,
-'Specification-Vendor'    : 'MaiGroup',
-'Specification-Vendor-URL': 'http://www.maigroup.com',
-'Specification-Version'   : version,
-'Implementation-Title'    : group,
-'Implementation-Vendor'   : 'MaiGroup',
-'Implementation-URL'      : 'http://www.maigroup.com',
-'Implementation-Version'  : version,
-'Created-By'              : "${System.getProperty('java.version')} (${System.getProperty('java.specification.vendor')})",
-'Built-By'                : System.getProperty("user.name"),
-'Build-Date'              : (new Date()).format("Y-MM-dd H:m:s")
+            'Main-Class'              : mainClass,
+            'Specification-Vendor'    : 'MaiGroup',
+            'Specification-Vendor-URL': 'http://www.maigroup.com',
+            'Specification-Version'   : version,
+            'Implementation-Title'    : group,
+            'Implementation-Vendor'   : 'MaiGroup',
+            'Implementation-URL'      : 'http://www.maigroup.com',
+            'Implementation-Version'  : version,
+            'Created-By'              : "${System.getProperty('java.version')} (${System.getProperty('java.specification.vendor')})",
+            'Built-By'                : System.getProperty("user.name"),
+            'Build-Date'              : (new Date()).format("Y-MM-dd H:m:s")
     ]
+}
+
+
+def buildDockerImage(String imageName) {
+    println "BUILDING DOCKER IMAGE : $imageName"
+    println "docker build -t $imageName .".execute().text.trim()
+    println "docker images".execute().text.trim()
+
+    if (!imageName.toUpperCase().contains("SNAPSHOT")) {
+        println "docker push $imageName".execute().text.trim()
+    }
+}
+
+task runDckerizedServices(group: 'application') {
+//    subprojects.findAll { subproject ->
+//        {
+//            def task = subproject.tasks.find { t -> t.name == 'runDockerizedService' }
+//            if (task != null) {
+//                task.execute()
+//            }
+//        }
+//    }
 }

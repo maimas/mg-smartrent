@@ -1,6 +1,3 @@
-scmVersion.repository.customUsername = project.findProperty("GITHUB_TOKEN") ?: project.property('gitHubPass')
-project.version = scmVersion.version
-
 mainClassName = 'com.mg.smartrent.gatewayapi.GatewayApiApplication'
 
 jar {
@@ -14,18 +11,26 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+
+    implementation "com.google.guava:guava:${project['google-guava.version']}"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 test {
     maxHeapSize = '1G'
 }
 
+
+def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
+def dockerExposedPorts = "8081:8081"
+
 /**
  * Enhances the build stage with generation of a new post build directory that will hold unzipped distribution.
  * Needed for docker image generation
  */
 build {
-    doLast {
+    doLast {//create dist
         def targetDistDir = new File("$buildDir/distributions-docker")
         def windArchive = new File("$buildDir/distributions").listFiles().find { it.name.endsWith(".zip") }
         copy {
@@ -35,31 +40,18 @@ build {
         def unzippedDir = targetDistDir.listFiles()[0]
         unzippedDir.renameTo(new File(targetDistDir, 'app'))
     }
-}
 
-/**
- * Build the Docker Image.
- */
-task buildDocker(group: 'build', dependsOn: 'build') {
-    doLast {
-        def appName = "$project.name:$project.version"
-        def appPorts = "8081:8081"
-
-        println "docker build -t maimas/$appName .".execute().text.trim()
-        println "docker run -d -p $appPorts maimas/$appName".execute().text.trim()
-
-        println "docker images".execute().text.trim()
+    doLast {//build docker image
+        buildDockerImage(dockerImageName)
     }
-
 }
 
-/**
- * Workaround for Wind distribution.
- * Replace classpath libs definition with a folder location that contains all the libs to obtain a shorten value.
- */
-tasks.withType(CreateStartScripts).each { task ->
-    task.doLast {
-        task.windowsScript.write task.windowsScript.text.replaceFirst(/(set CLASSPATH=%APP_HOME%\\lib\\).*/, { "${it[1]}*" })
-        task.unixScript.write task.unixScript.text.replaceFirst(/(CLASSPATH=.APP_HOME\/lib\/).*/, { "CLASSPATH=\$(echo \$APP_HOME/lib/*.jar | tr ' ' ':')" })
+task runDockerizedService(group: 'application') {
+    doLast {
+        println "STARTING DOCKER CONTAINER FOR: $dockerImageName"
+        println "docker rmi -f $dockerImageName".execute().text.trim()
+
+        println "docker run -d -p $dockerExposedPorts maimas/$dockerImageName"
+        println "docker run -d -p $dockerExposedPorts maimas/$dockerImageName".execute().text.trim()
     }
 }
