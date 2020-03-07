@@ -29,7 +29,7 @@ public class PositiveDateRangeValidator implements ConstraintValidator<PositiveD
             if (startDate == null && endDate == null) {//if both are null then consider as valid case
                 return true;
             }
-            return (startDate.before(endDate));
+            return startDate.before(endDate) || startDate.equals(endDate);
 
         } catch (Exception e) {
             return false;
