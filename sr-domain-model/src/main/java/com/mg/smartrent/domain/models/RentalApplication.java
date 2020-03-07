@@ -2,6 +2,7 @@ package com.mg.smartrent.domain.models;
 
 import com.mg.smartrent.domain.enums.EnCurrency;
 import com.mg.smartrent.domain.enums.EnRentalApplicationStatus;
+import com.mg.smartrent.domain.validation.annotations.PositiveDateRange;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.Date;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
+@PositiveDateRange(start = "checkInDate", end = "checkOutDate", message = "CheckIn Date should not be greater than CheckOut Date")
 public class RentalApplication extends BizItem {
 
     @NotNull
