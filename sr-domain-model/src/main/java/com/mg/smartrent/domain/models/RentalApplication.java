@@ -1,6 +1,7 @@
 package com.mg.smartrent.domain.models;
 
 import com.mg.smartrent.domain.enums.EnCurrency;
+import com.mg.smartrent.domain.enums.EnRentalApplicationStatus;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +37,7 @@ public class RentalApplication extends BizItem {
     private Date checkOutDate;
 
     @NotNull
-    @ValueOfEnum(enumClass = EnCurrency.class)
+    @ValueOfEnum(enumClass = EnRentalApplicationStatus.class)
     private String status;
 
     public RentalApplication() {
