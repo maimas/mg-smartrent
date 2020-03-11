@@ -13,7 +13,7 @@ from password section of the server
 * 	[Spring Boot](https://spring.io/projects/spring-boot) - Framework to ease the bootstrapping and development of new Spring Applications
 * 	[Eureka](https://spring.io/guides/gs/service-registration-and-discovery/) - Netflix Eureka service registry.
 * 	[Sleuth](https://www.baeldung.com/spring-cloud-sleuth-single-application) - Distributed logging capable to trace operations between REST requests and not only.
-* 	[Zipkin](https://www.zipkin.com/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
+* 	[Zipkin](https://zipkin.io/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 * 	[Lombok](https://projectlombok.org/) - Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
 * 	[Valid4j](http://www.valid4j.org/) - valid4j is a simple assertion and validation library for Java which makes it possible to use your favorite hamcrest-matchers to express pre- and post-conditions in your code in a design by contract style.
 * 	[Docker](https://www.docker.com/) - Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers..
