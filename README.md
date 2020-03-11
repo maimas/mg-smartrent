@@ -30,7 +30,7 @@ from password section of the server
 - Java 1.8
 - Docker
 
-#####Run the app:
+##### Run the app:
 The fastest way to start the application is to build it locally and generate docker containers for each of the Microservices - then run docker images 
 1. Run gradle command ``gradlew build`` - this will generate distribution packages for all the MicroServices and local Docker images.
 2. Run gradle command ``gradlew runDockerContainer`` - this will start all the Docker images locally.
@@ -41,7 +41,7 @@ The fastest way to start the application is to build it locally and generate doc
 |http://localhost:8081/ |Eureka Dashboard |Provides and overview of Ecosystem Microservices. Default UI user is `admin` pass `12341234`|
 |http://localhost:9411/zipkin/ |Zipkin Dashboard |Provides access to application logs that are aggregated from all the services. |
 
-#####App REST endpoints:
+##### App REST endpoints:
 Routing is realized trough Zuul framework integrated in the Gateway API service.
 
 |Endpoint|Service Name|Description|
