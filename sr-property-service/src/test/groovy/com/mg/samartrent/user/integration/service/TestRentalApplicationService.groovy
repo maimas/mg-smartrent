@@ -91,24 +91,22 @@ class TestRentalApplicationService extends IntegrationTestsSetup {
         e.getMessage() == "Rental Application could not be saved. User not found, UserTID = mockedUserId"
     }
 
-    def "test: save rental application with past checkin/checkout date"() {
+    def "test: save rental application with same checkin/checkout date"() {
         setup: "mock user exists"
         def application = generateRentalApplication()
         application.setPropertyTID(dbProperty.getTrackingId())
         when(userService.userExists(application.getRenterUserTID())).thenReturn(true)//mock external service call
 
-        when: "saving with past dates"
-        application.setCheckInDate(new Date(System.currentTimeMillis() - 100000))
-        application.setCheckOutDate(new Date(System.currentTimeMillis() - 100000))
-        rentalApplicationService.save(application)
+        when: "saving with same dates"
+        def date = new Date(System.currentTimeMillis())
+        application.setCheckInDate(date)
+        application.setCheckOutDate(date)
+        def dbApplication = rentalApplicationService.save(application)
 
         then: "exception is thrown"
-        ModelValidationException e = thrown()
-        e.getMessage().startsWith('[PropertyListing] validation failed [[Invalid future date for [CheckIn Date] =')
-        e.getMessage().contains('Invalid future date for [CheckOut Date] =')
+        dbApplication != null
     }
 
-    //todo: fix the test by creating an anotation to validate the date interval: date1.before(date2)
     def "test: save rental application with checkin date after checkout date"() {
         setup:
         def application = generateRentalApplication()
@@ -121,8 +119,8 @@ class TestRentalApplicationService extends IntegrationTestsSetup {
         rentalApplicationService.save(application)
 
         then: "exception is thrown"
-        ModelBusinessValidationException e = thrown()
-        e.getMessage().startsWith("[PropertyListing] validation failed [[Invalid future date for [CheckOut Date] =")
+        ModelValidationException e = thrown()
+        e.getMessage().contains("CheckIn Date should not be greater than CheckOut Date")
     }
 
     def "test: save listing for existent User and Property"() {

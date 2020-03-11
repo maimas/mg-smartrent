@@ -11,13 +11,28 @@ spring:
       name: admin
       password: 12341234
 
-
 ##------------------------------------------------------------------
 ##------GATEWAY API CONFIGURATION-----------------------------------
 ##------------------------------------------------------------------
 eureka:
+  instance:
+    hostname: localhost
   client:
     register-with-eureka: false
-    fetch-registry: false
+    fetch-registry: true
     service-url:
-      defaultZone: http://admin:12341234@localhost:8081/eureka
+      defaultZone: http://admin:12341234@${eureka.instance.hostname}:${server.port}/eureka
+
+
+
+##------------------------------------------------------------------
+##------ZUUL ROUTING CONFIGURATION----------------------------------
+##------------------------------------------------------------------
+zuul:
+  routes:
+    user-service:
+      path: /user-service/**
+    property-service:
+      path: /property-service/**
+    renter-service:
+      path: /renter-service/**

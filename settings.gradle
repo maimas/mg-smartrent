@@ -1,5 +1,9 @@
 rootProject.name = 'smartrent'
 
+//DB
+include 'sr-database-service'
+
+//MICROSERVICES MODULES
 include 'sr-logs-aggregator-service'
 include 'sr-gateway-api-service'
 include 'sr-property-service'

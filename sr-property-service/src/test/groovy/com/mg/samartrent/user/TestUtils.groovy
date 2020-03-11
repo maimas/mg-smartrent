@@ -3,6 +3,7 @@ package com.mg.samartrent.user
 import com.mg.smartrent.domain.enums.EnBuildingType
 import com.mg.smartrent.domain.enums.EnCurrency
 import com.mg.smartrent.domain.enums.EnPropertyCondition
+import com.mg.smartrent.domain.enums.EnRentalApplicationStatus
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.RentalApplication
@@ -33,7 +34,7 @@ class TestUtils {
         listing.setListed(true)
         listing.setPrice(100)
         listing.setTotalViews(3)
-        listing.setCheckInDate(new Date(System.currentTimeMillis() + 10000000000))
+        listing.setCheckInDate(new Date(System.currentTimeMillis()))
         listing.setCheckOutDate(new Date(System.currentTimeMillis() + 10000000000))
         return listing
     }

@@ -19,3 +19,5 @@ eureka:
       defaultZone: http://admin:12341234@localhost:8081/eureka
     healthcheck:
       enabled: true
+  instance:
+    preferIpAddress: true

@@ -12,6 +12,7 @@
 * 	[Sleuth](https://www.baeldung.com/spring-cloud-sleuth-single-application) - Distributed logging capable to trace operations between REST requests and not only.
 * 	[Zipkin](https://www.zipkin.com/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 * 	[Docker](https://www.docker.com/) - Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers..
+* 	[Valid4j](http://www.valid4j.org/) - valid4j is a simple assertion and validation library for Java which makes it possible to use your favorite hamcrest-matchers to express pre- and post-conditions in your code in a design by contract style.
 
 ## To-Do
 - [x] Register service with Gateway API
@@ -62,9 +63,9 @@ To be done.
 |  URL |  Method | Remarks |
 |----------|--------------|--------------|
 |`http://localhost:8082/rest/users`                           | POST | Save user|
-|`http://localhost:8082/rest/users?email=test.test@test.com`  | GET  | Retrieve user by email|
-|`http://localhost:8082/rest/users?trackingId=12341234`       | GET  | Retrieve user by trackingId|
-|`http://localhost:8082/rest/users/exists/{trackingId}`       | GET  | Check is the user exits|
+|`http://localhost:8082/rest/users/{trackingId}`              | GET  | Retrieve user by trackingId|
+|`http://localhost:8082/rest/users?email={email}`             | GET  | Retrieve user by email|
+|`http://localhost:8082/rest/users?exists={trackingId}`       | GET  | Check is the user exits|
 
 
 ## Documentation

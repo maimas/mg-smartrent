@@ -1,0 +1,58 @@
+version: '3'
+services:
+  logs-aggregator:
+    container_name: logs-aggregator
+    image: maimas/sr-logs-aggregator-service:0.1.2-SNAPSHOT
+    ports:
+      - 9411:9411
+
+  database-service:
+    container_name: database-service
+    image: maimas/sr-database-service:0.1.2-SNAPSHOT
+    ports:
+      - 27017:27017
+      - 28017:28017
+
+  gateway-api:
+    depends_on:
+      - logs-aggregator
+      - database-service
+    container_name: gateway-api
+    image: maimas/sr-gateway-api-service:0.1.2-SNAPSHOT
+    ports:
+      - 8081:8081
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://admin:12341234@gateway-api:8081/eureka
+      SPRING_ZIPKIN_BASEURL: http://logs-aggregator:9411/
+
+  user-service:
+    depends_on:
+      - gateway-api
+    container_name: user-service
+    image: maimas/sr-user-service:0.1.2-SNAPSHOT
+    ports:
+      - 8082:8082
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://admin:12341234@gateway-api:8081/eureka
+      SPRING_ZIPKIN_BASEURL: http://logs-aggregator:9411/
+      SPRING_DATA_MONGODB_URI: mongodb://database-service/smartrent2
+
+  property-service:
+    container_name: property-service
+    image: maimas/sr-property-service:0.1.2-SNAPSHOT
+    ports:
+      - 8083:8083
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://admin:12341234@gateway-api:8081/eureka
+      SPRING_ZIPKIN_BASEURL: http://logs-aggregator:9411/
+      SPRING_DATA_MONGODB_URI: mongodb://database-service/smartrent2
+
+  renter-service:
+    container_name: renter-service
+    image: maimas/sr-renter-service:0.1.2-SNAPSHOT
+    ports:
+      - 8084:8084
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://admin:12341234@gateway-api:8081/eureka
+      SPRING_ZIPKIN_BASEURL: http://logs-aggregator:9411/
+      SPRING_DATA_MONGODB_URI: mongodb://database-service/smartrent2

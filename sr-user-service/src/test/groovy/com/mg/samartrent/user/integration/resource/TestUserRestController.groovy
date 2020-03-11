@@ -84,7 +84,7 @@ class TestUserRestController extends IntegrationTestsSetup {
 
     def "test: get existing user by trackingId"() {
         when:
-        def url = "http://localhost:$port/rest/users?trackingId=${dbUser.getTrackingId()}"
+        def url = "http://localhost:$port/rest/users/${dbUser.getTrackingId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -100,7 +100,7 @@ class TestUserRestController extends IntegrationTestsSetup {
     def "test: get existing user by trackingId for in-existent user"() {
 
         when:
-        def url = "http://localhost:$port/rest/users?trackingId=testInvId"
+        def url = "http://localhost:$port/rest/users/testInvId"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -110,7 +110,7 @@ class TestUserRestController extends IntegrationTestsSetup {
 
     def "test: user exists"() {
         when:
-        def url = "http://localhost:$port/rest/users/exists/${dbUser.getTrackingId()}"
+        def url = "http://localhost:$port/rest/users?exists=${dbUser.getTrackingId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -120,7 +120,7 @@ class TestUserRestController extends IntegrationTestsSetup {
 
     def "test: user exists for in-existent user"() {
         when:
-        def url = "http://localhost:$port/rest/users/exists/123123"
+        def url = "http://localhost:$port/rest/users?exists=123123"
         MvcResult result = doGet(mockMvc, url)
 
         then:

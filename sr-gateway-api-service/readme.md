@@ -11,6 +11,7 @@ All te internal services communication will also happen trough the Gateway API.
 * 	[Git](https://git-scm.com/) - Free and Open-Source distributed version control system 
 * 	[Lombok](https://projectlombok.org/) - Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
 * 	[Netflix Eureka](https://spring.io/guides/gs/service-registration-and-discovery/) - Netflix Eureka service registry.
+* 	[Zuul](https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html) - Zuul is a JVM-based router and server-side load balancer from Netflix
 * 	[SpringCloud Sleuth](https://www.baeldung.com/spring-cloud-sleuth-single-application) - Distributed logging capable to trace operations between REST requests and not only.
 * 	[Docker](https://www.docker.com/) - Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers..
 * 	[Zipkin](https://www.zipkin.com/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.

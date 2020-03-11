@@ -70,7 +70,7 @@ class TestPropertyListingValidation extends Specification {
             Assert.assertEquals(13, beanUtilsWrapper.getProperties().size())//13 properties
 
         } catch (Exception e) {
-            Assert.assertEquals(errorMsg, e.getMessage().trim())
+            Assert.assertTrue(e.getMessage().contains(errorMsg))
         }
         where:
         model                     | field          | value                                  | expectException | errorMsg
@@ -97,12 +97,11 @@ class TestPropertyListingValidation extends Specification {
         generatePropertyListing() | "checkInDate"  | new Date(currentTimeMillis() + 100000) | false           | null
 
         generatePropertyListing() | "checkOutDate" | new Date(currentTimeMillis())          | false           | null
-        generatePropertyListing() | "checkOutDate" | new Date(currentTimeMillis() - 100000) | false           | null
+        generatePropertyListing() | "checkOutDate" | new Date(currentTimeMillis() - 100000) | true            | "CheckIn Date should not be greater than CheckOut Date"
         generatePropertyListing() | "checkOutDate" | new Date(currentTimeMillis() + 100000) | false           | null
 
         generatePropertyListing() | "listed"       | true                                   | false           | null
         generatePropertyListing() | "listed"       | false                                  | false           | null
-
     }
 
 }

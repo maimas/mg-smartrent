@@ -24,7 +24,7 @@ public class ExternalUserService {
     }
 
     public boolean userExists(@NotNull @NotBlank String userTID) {
-        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users/exists/trackingId=" + userTID);
+        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users?exists=" + userTID);
         ResponseEntity response = restTemplate.getForEntity(uri, ResponseEntity.class);
 
         return response.getStatusCode() == HttpStatus.OK;

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.valid4j.Validation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -37,12 +38,9 @@ public class RentalApplicationService {
 
 
     public RentalApplication save(@NotNull RentalApplication model) throws ModelValidationException {
-        if (!userService.userExists(model.getRenterUserTID())) {
-            throw new ModelBusinessValidationException(String.format("Rental Application could not be saved. User not found, UserTID = %s", model.getRenterUserTID()));
-        }
-        if (propertyService.findByTrackingId(model.getPropertyTID()) == null) {
-            throw new ModelBusinessValidationException(String.format("Rental Application could not be saved. Property not found, TrackingId = %s", model.getPropertyTID()));
-        }
+        Validation.validate(userService.userExists(model.getRenterUserTID()), new ModelBusinessValidationException(String.format("Rental Application could not be saved. User not found, UserTID = %s", model.getRenterUserTID())));
+        Validation.validate(propertyService.findByTrackingId(model.getPropertyTID()) != null, new ModelBusinessValidationException(String.format("Rental Application could not be saved. Property not found, TrackingId = %s", model.getPropertyTID())));
+
         enrich(model);
         validate(model);
         RentalApplication dbModel = queryService.save(model);

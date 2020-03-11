@@ -90,24 +90,22 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         e.getMessage() == "Listing could not be saved. User not found, UserTID = ${listing.userTID}"
     }
 
-    def "test: save listing with past checkin/checkout date"() {
+    def "test: save listing with same checkin/checkout date"() {
         setup: "mock user exists"
         def listing = generatePropertyListing()
         listing.setPropertyTID(dbProperty.getTrackingId())
         when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
 
         when: "saving with past dates"
-        listing.setCheckInDate(new Date(System.currentTimeMillis() - 100000))
-        listing.setCheckOutDate(new Date(System.currentTimeMillis() - 100000))
-        listingService.save(listing)
+        def date = new Date(System.currentTimeMillis())
+        listing.setCheckInDate(date)
+        listing.setCheckOutDate(date)
+        def dbListing = listingService.save(listing)
 
-        then: "exception is thrown"
-        ModelValidationException e = thrown()
-        e.getMessage().startsWith('[PropertyListing] validation failed [[Invalid future date for [CheckIn Date] =')
-        e.getMessage().contains('Invalid future date for [CheckOut Date] =')
+        then:
+        dbListing != null
     }
 
-    //todo: fix the test by creating an anotation to validate the date interval: date1.before(date2)
     def "test: save listing for with checkin after checkout date"() {
         setup:
         def listing = generatePropertyListing()
@@ -120,8 +118,8 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         listingService.save(listing)
 
         then: "exception is thrown"
-        ModelBusinessValidationException e = thrown()
-        e.getMessage().startsWith("[PropertyListing] validation failed [[Invalid future date for [CheckOut Date] =")
+        ModelValidationException e = thrown()
+        e.getMessage().contains("CheckIn Date should not be greater than CheckOut Date")
     }
 
     def "test: save listing for existent User and Property"() {
@@ -141,7 +139,7 @@ class TestPropertyListingService extends IntegrationTestsSetup {
         listing.getPropertyTID() == dbProperty.trackingId
         listing.getPrice() == 100
         listing.getTotalViews() == 3
-        listing.getCheckInDate().after(new Date())
+        listing.getCheckInDate().before(new Date())
         listing.getCheckOutDate().after(new Date())
     }
 

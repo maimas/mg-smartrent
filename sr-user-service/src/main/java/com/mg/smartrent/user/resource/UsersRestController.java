@@ -24,7 +24,7 @@ public class UsersRestController {
     @PostMapping
     public ResponseEntity saveUser(@RequestBody User user) throws ModelValidationException {
         userService.save(user);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -33,16 +33,14 @@ public class UsersRestController {
         return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
     }
 
-    @GetMapping(params = "trackingId")
-    public ResponseEntity<User> getUserByTrackingId(@RequestParam String trackingId) {
+    @GetMapping("/{trackingId}")
+    public ResponseEntity<User> getUserByTrackingId(@PathVariable String trackingId) {
         return new ResponseEntity<>(userService.findByTrackingId(trackingId), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/exists/{trackingId}")
-    public ResponseEntity<Boolean> existsByTrackingId(@PathVariable String trackingId) {
-
-        boolean found = userService.findByTrackingId(trackingId) != null;
-        return ResponseEntity.ok(found);
+    @GetMapping(params = "exists")
+    public ResponseEntity<Boolean> existsByTrackingId(@RequestParam("exists") String trackingId) {
+        return ResponseEntity.ok(userService.findByTrackingId(trackingId) != null);
     }
 
 

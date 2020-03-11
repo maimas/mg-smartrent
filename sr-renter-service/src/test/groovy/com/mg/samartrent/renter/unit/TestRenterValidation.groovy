@@ -68,9 +68,9 @@ class TestRenterValidation extends Specification {
         generateRenter() | 'lastName'    | "LName"                 | "LName"                 | false           | false         | null
 
         generateRenter() | 'dateOfBirth' | new Date(10000000010)   | new Date(10000000010)   | false           | false         | null
-        generateRenter() | 'dateOfBirth' | null                    | null                    | true            | false         | "Field [dateOfBirth], value [null], reason [must not be null]"
+        generateRenter() | 'dateOfBirth' | null                    | null                    | false           | false         | null
 
-        generateRenter() | 'phoneNumber' | null                    | null                    | true            | false         | "Field [phoneNumber], value [null], reason [must not be null]"
+        generateRenter() | 'phoneNumber' | null                    | null                    | false           | false         | null
         generateRenter() | 'phoneNumber' | ""                      | null                    | true            | true          | "Field [phoneNumber], value [], reason [must be a valid phone number]"
         generateRenter() | 'phoneNumber' | "dasdasds"              | null                    | true            | false         | "Field [phoneNumber], value [dasdasds], reason [must be a valid phone number]"
         generateRenter() | 'phoneNumber' | "3252402021"            | "3252402021"            | false           | false         | null

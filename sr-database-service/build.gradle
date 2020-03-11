@@ -1,0 +1,37 @@
+mainClassName = ''
+
+jar {
+    manifest {
+        attributes manifestAttributes(mainClassName)
+    }
+}
+
+dependencies {
+}
+
+
+def dockerFileDir = projectDir
+def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
+
+task removeDockerContainer(group: 'docker') {
+    doLast { removeDockerImage(dockerImageName) }
+}
+
+task buildDockerContainer(group: 'docker') {
+    doLast { buildDockerImage(projectDir, dockerImageName) }
+}
+
+test {
+    maxHeapSize = '1G'
+}
+
+build {
+    finalizedBy { buildDockerContainer }
+}
+
+release {
+    doLast { releaseDockerImage(dockerFileDir, dockerImageName) }
+}
+
+
+

@@ -3,6 +3,7 @@ package com.mg.samartrent.user.integration.resource
 import com.fasterxml.jackson.core.type.TypeReference
 import com.mg.samartrent.user.TestUtils
 import com.mg.samartrent.user.integration.IntegrationTestsSetup
+import com.mg.smartrent.domain.enums.EnRentalApplicationStatus
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.models.User
@@ -23,6 +24,7 @@ import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
+import static com.mg.smartrent.domain.enums.EnRentalApplicationStatus.PendingOwnerReview
 import static org.mockito.Mockito.when
 
 @SpringBootTest(
@@ -188,6 +190,7 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
     private MockHttpServletResponse createRentalApplication(Property property, String rentalApplTrackingId) {
         RentalApplication rentalApplication = TestUtils.generateRentalApplication()
         rentalApplication.setTrackingId(rentalApplTrackingId)
+        rentalApplication.setStatus(PendingOwnerReview.name())
         rentalApplication.setPropertyTID(property.getTrackingId())
         rentalApplication.setRenterUserTID(property.getUserTID())
 

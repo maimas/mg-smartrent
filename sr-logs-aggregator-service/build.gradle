@@ -10,10 +10,14 @@ dependencies {
     implementation files('libs/zipkin-server-2.20.0-exec.jar')
 }
 
+def dockerFileDir = projectDir
 def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
-def dockerExposedPorts = "9411:9411"
 
-build {
+task removeDockerContainer(group: 'docker') {
+    doLast { removeDockerImage(dockerImageName) }
+}
+
+task buildDockerContainer(group: 'docker') {
     doLast {
         new File("$buildDir/distributions").deleteDir()//delete to avoid confusions
         new File("$buildDir/libs").deleteDir()
@@ -32,23 +36,17 @@ build {
         }
     }
 
-    doLast {
-        buildDockerImage(dockerImageName)
-    }
+    doLast { buildDockerImage(projectDir, dockerImageName) }
+}
+
+test {
+    maxHeapSize = '1G'
+}
+
+build {
+    finalizedBy { buildDockerContainer }
 }
 
 release {
-    doLast {
-        releaseDockerImage(dockerImageName)
-    }
+    doLast { releaseDockerImage(dockerFileDir, dockerImageName) }
 }
-
-task runDockerContainer(group: 'application') {
-    doLast {
-        println "STARTING DOCKER CONTAINER FOR: $dockerImageName"
-
-        println "docker run -d -p $dockerExposedPorts $dockerImageName"
-        println "docker run -d -p $dockerExposedPorts $dockerImageName".execute().text.trim()
-    }
-}
-
