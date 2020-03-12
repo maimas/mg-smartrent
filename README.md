@@ -1,8 +1,5 @@
 # mg-smartrent
 
-Configure your maven git repository since gradle is looking at the token 
-from password section of the server
-
 # SmartRent Application Backend
  This is a backend of an application designed to report and review Renters, manage renting process, property and related issues, requests or offers. 
 
@@ -27,22 +24,24 @@ from password section of the server
 - [ ] Integrate application with Jenkins CI/CD. Create jobs that can be bootstraped from Git
 
 ## Running the application
-#####Prerequisites:
+###### Prerequisites:
 - Java 1.8
 - Docker
+- Maven - configured with GitHub (*Configure your maven git repository since gradle is looking at the token 
+from password section of the server*)
 
-##### Run the app:
+###### Run the app:
 The fastest way to start the application is to build it locally and generate docker containers for each of the Microservices - then run docker images 
 1. Run gradle command ``gradlew build`` - this will generate distribution packages for all the MicroServices and local Docker images.
 2. Run command in your terminal ``docker-compose up`` - this will start all the services in a docker compose locally.
 
-#####App monitoring URLs:
+###### App monitoring URLs:
 |Endpoint|UI Name|Description|
 |--------|------------|-----------|
 |http://localhost:8081/ |Eureka Dashboard |Provides and overview of Ecosystem Microservices. Default UI user is `admin` pass `12341234`|
 |http://localhost:9411/zipkin/ |Zipkin Dashboard |Provides access to application logs that are aggregated from all the services. |
 
-##### App REST endpoints:
+###### App REST endpoints:
 Routing is realized trough Zuul framework integrated in the Gateway API service.
 
 |Endpoint|Verb     |Service Name|Description|
@@ -97,5 +96,4 @@ This Project uses GitHub's integrated issue tracking system to record bugs and f
 
 
 ## License
-TBD
-<!--[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSpring-Boot-Framework%2FSpring-Boot-Application-Template.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FSpring-Boot-Framework%2FSpring-Boot-Application-Template?ref=badge_large)-->
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmaimas%2Fmg-smartrent.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmaimas%2Fmg-smartrent?ref=badge_large)
