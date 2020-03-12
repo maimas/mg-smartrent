@@ -7,50 +7,43 @@ jar {
 }
 
 dependencies {
-    implementation "com.mg.platform:persistence:${project['mg-persistence.version']}"
-    implementation "com.mg.smartrent:domain-model:${project['mg-domain-model.version']}"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
 
-    implementation "com.google.guava:guava:${project['google-guava.version']}"
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation "com.mg.smartrent:domain-model:${project['mg-domain-model.version']}"
+    implementation "com.mg.platform:persistence:${project['mg-persistence.version']}"
+    implementation "org.valid4j:valid4j:${project['valid4j.version']}"
 }
+
+def dockerFileDir = projectDir
+def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
+
+task removeDockerContainer(group: 'docker') {
+    doLast { removeDockerImage(dockerImageName) }
+}
+
+task buildDockerContainer(group: 'docker') {
+    doLast {
+        def distZip = new File("$buildDir/distributions").listFiles().find { it.name.endsWith(".zip") }
+        def targetDockerDistDir = new File("$buildDir/distributions-docker")
+        prepareDockerImage(distZip, targetDockerDistDir)
+    }
+
+    doLast { buildDockerImage(projectDir, dockerImageName) }
+}
+
 
 test {
     maxHeapSize = '1G'
 }
 
-def dockerImageName = "${project.property("dockerRepoName")}/$project.name:$project.version"
-def dockerExposedPorts = "8084:8084"
-
 build {
-    doLast {
-        def targetDistDir = new File("$buildDir/distributions-docker")
-        def windArchive = new File("$buildDir/distributions").listFiles().find { it.name.endsWith(".zip") }
-        copy {
-            from zipTree(windArchive)
-            into targetDistDir
-        }
-        def unzippedDir = targetDistDir.listFiles()[0]
-        unzippedDir.renameTo(new File(targetDistDir, 'app'))
-    }
-    doLast {
-        buildDockerImage(dockerImageName)
-    }
+    finalizedBy { buildDockerContainer }
 }
 
 release {
-    doLast {
-        releaseDockerImage(dockerImageName)
-    }
-}
-
-task runDockerContainer(group: 'application') {
-    doLast {
-        println "STARTING DOCKER CONTAINER FOR: $dockerImageName"
-
-        println "docker run -d -p $dockerExposedPorts $dockerImageName"
-        println "docker run -d -p $dockerExposedPorts $dockerImageName".execute().text.trim()
-    }
+    doLast { releaseDockerImage(dockerFileDir, dockerImageName) }
 }

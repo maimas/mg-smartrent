@@ -33,7 +33,7 @@ from password section of the server
 ##### Run the app:
 The fastest way to start the application is to build it locally and generate docker containers for each of the Microservices - then run docker images 
 1. Run gradle command ``gradlew build`` - this will generate distribution packages for all the MicroServices and local Docker images.
-2. Run gradle command ``gradlew runDockerContainer`` - this will start all the Docker images locally.
+2. Run command in your terminal ``docker-compose up`` - this will start all the services in a docker compose locally.
 
 #####App monitoring URLs:
 |Endpoint|UI Name|Description|
@@ -44,12 +44,15 @@ The fastest way to start the application is to build it locally and generate doc
 ##### App REST endpoints:
 Routing is realized trough Zuul framework integrated in the Gateway API service.
 
-|Endpoint|Service Name|Description|
-|--------|------------|-----------|
-|http://localhost:8081/user-service/rest/<endpoint> |User service |Provides access to User domain|
-|``http://localhost:8081/user-service/rest/users?exists={trackingID}``|
-|http://localhost:8081/property-service/rest/<endpoint> |Property service |Provides access to Property domain|
-|http://localhost:8081/renter-service/rest/<endpoint> |Renter service |Provides access to Renter domain|
+|Endpoint|Verb     |Service Name|Description|
+|--------|---------|------------|-----------|
+|http://localhost:8081/user-service/rest/users |POST|User service |Creates or updates the user|
+|http://localhost:8081/user-service/rest/users/{trackingID}|GET|User service |Get the user by TrackingId|
+|http://localhost:8081/user-service/rest/users/{email}|GET|User service |Get the user by Email|
+|http://localhost:8081/user-service/rest/users?exists={trackingID}|GET|User service |Check is the user exists|
+|TODO: describe rest of the endpoints|||
+|http://localhost:8081/property-service/rest/<endpoint>|POST|Property service |Provides access to Property domain|
+|http://localhost:8081/renter-service/rest/<endpoint> |POST|Renter service |Provides access to Renter domain|
 
 ##### Other Gradle commands
 - ``gradlew removeAllDockerImages`` - remove forcefully ALL local images.  
