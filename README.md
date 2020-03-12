@@ -18,6 +18,7 @@ from password section of the server
 * 	[Valid4j](http://www.valid4j.org/) - valid4j is a simple assertion and validation library for Java which makes it possible to use your favorite hamcrest-matchers to express pre- and post-conditions in your code in a design by contract style.
 * 	[Docker](https://www.docker.com/) - Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers..
 * 	[Git](https://git-scm.com/) - Free and Open-Source distributed version control system 
+* 	[Axion](https://axion-release-plugin.readthedocs.io/en/latest/configuration/basic_usage/) - Release management plugin 
 
 ## To-Do
 - [ ] Secure REST endpoints
