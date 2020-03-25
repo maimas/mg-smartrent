@@ -5,6 +5,8 @@ import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.user.UserApplication
 import com.mg.smartrent.user.resource.UsersRestController
+import com.mg.smartrent.user.service.UserService
+import com.netflix.discovery.converters.Auto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -29,6 +31,8 @@ class TestUserRestController extends IntegrationTestsSetup {
     private TestRestTemplate restTemplate
     @Autowired
     private UsersRestController restController
+    @Autowired
+    private UserService userService
     static boolean initialized
     static String rootURL = ""
 
@@ -44,19 +48,73 @@ class TestUserRestController extends IntegrationTestsSetup {
         }
     }
 
-    static def dbUser = generateUser()
 
     def "test: save user"() {
+        setup:
+        def user = generateUser()
+
         when:
         def url = "$rootURL/rest/users"
-        def response = doPost(mockMvc, url, dbUser).getResponse()
+        def response = doPost(mockMvc, url, user).getResponse()
 
         then:
         response.status == HttpStatus.CREATED.value()
-        response.getContentAsString() == ""
+        response.getContentAsString() != ""
+
+        when:
+        def dbUser = userService.findByEmail(user.getEmail());
+        then:
+        dbUser != null
     }
 
+    def "test: update user"() {
+        setup:
+        def user = userService.save(generateUser())
+        user.setFirstName("UpdatedName")
+
+        when:
+        def url = "$rootURL/rest/users/${user.trackingId}"
+        def result = doPut(mockMvc, url, user)
+        then:
+        result.getResponse().status == HttpStatus.OK.value()
+
+        when:
+        def responseUser = (User) mvcResultToModel(result, User.class)
+        then:
+        responseUser.trackingId == user.trackingId
+        responseUser.getFirstName() == 'UpdatedName'
+    }
+
+    def "test: update user with mismatch in trackingId param"() {
+        setup:
+        def user = userService.save(generateUser())
+
+        when:
+        def url = "$rootURL/rest/users/invalidUsertTrackingId"
+        def result = doPut(mockMvc, url, user).getResponse()
+        then:
+        result.status == HttpStatus.BAD_REQUEST.value()
+        result.getContentAsString() == ""
+    }
+
+    def "test: update in-existent user"() {
+        setup:
+        def user = generateUser()
+        user.setTrackingId("mock_tid")
+
+        when:
+        def url = "$rootURL/rest/users/${user.trackingId}"
+        def result = doPut(mockMvc, url, user).getResponse()
+        then:
+        result.status == HttpStatus.NOT_FOUND.value()
+        result.getContentAsString() == ""
+    }
+
+
     def "test: get by email"() {
+        setup:
+        def dbUser = userService.save(generateUser())
+
         when:
         def url = "http://localhost:$port/rest/users?email=${dbUser.getEmail()}"
         MvcResult result = doGet(mockMvc, url)
@@ -82,6 +140,9 @@ class TestUserRestController extends IntegrationTestsSetup {
     }
 
     def "test: get existing user by trackingId"() {
+        setup:
+        def dbUser = userService.save(generateUser())
+
         when:
         def url = "http://localhost:$port/rest/users/${dbUser.getTrackingId()}"
         MvcResult result = doGet(mockMvc, url)
@@ -96,10 +157,10 @@ class TestUserRestController extends IntegrationTestsSetup {
         user.getEmail() == dbUser.getEmail()
     }
 
-    def "test: get existing user by trackingId for in-existent user"() {
+    def "test: get user by in-existent trackingId"() {
 
         when:
-        def url = "http://localhost:$port/rest/users/testInvId"
+        def url = "http://localhost:$port/rest/users/1234notExists"
         MvcResult result = doGet(mockMvc, url)
 
         then:

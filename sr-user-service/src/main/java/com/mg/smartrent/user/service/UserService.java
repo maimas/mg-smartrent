@@ -3,6 +3,7 @@ package com.mg.smartrent.user.service;
 import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.enums.EnUserStatus;
 import com.mg.smartrent.domain.models.User;
+import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.StringUtils;
@@ -34,16 +35,30 @@ public class UserService {
 
     public User save(@NotNull User model) throws ModelValidationException {
         log.info("Saving user: " + model.getEmail());
-        if (model.getId() == null) {//new user
-            if (StringUtils.isBlank(model.getPassword())) {
-                throw new ModelValidationException("User could not be saved. Password not specified.");
-            }
-
-            model.setPassword(passwordEncoder.encode(model.getPassword()));
-            model.setStatus(EnUserStatus.Pending.name());
-        } else {
-            //todo: update
+        if (model.getId() != null) {
+            throw new ModelBusinessValidationException("Could not save an existent user.");
         }
+        if (StringUtils.isBlank(model.getPassword())) {
+            throw new ModelValidationException("User could not be saved. Password not specified.");
+        }
+        model.setPassword(passwordEncoder.encode(model.getPassword()));
+        model.setStatus(EnUserStatus.Pending.name());
+
+        enrich(model);
+        validate(model);
+        return queryService.save(model);
+    }
+
+
+    public User update(@NotNull User model) throws ModelValidationException {
+        log.info("Updating user: " + model.getEmail());
+        if (model.getId() == null || findByTrackingId(model.getTrackingId()) == null) {
+            throw new ModelBusinessValidationException("Could not update. User does not exists.");
+        }
+        if (StringUtils.isBlank(model.getPassword())) {
+            throw new ModelValidationException("User could not be updated. Password not specified.");
+        }
+        model.setPassword(passwordEncoder.encode(model.getPassword()));
 
         enrich(model);
         validate(model);
