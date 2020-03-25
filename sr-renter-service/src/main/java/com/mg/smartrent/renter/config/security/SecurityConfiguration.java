@@ -1,4 +1,4 @@
-package com.mg.smartrent.user.config;
+package com.mg.smartrent.renter.config.security;
 
 
 import org.springframework.context.annotation.Configuration;

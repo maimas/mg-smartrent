@@ -1,4 +1,4 @@
-package com.mg.smartrent.user.config;
+package com.mg.smartrent.renter.config.documentation;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +36,7 @@ public class DocumentationConfiguration {
     public ApiInfo apiInfo() {
         final ApiInfoBuilder builder = new ApiInfoBuilder();
         builder.title(applicationContext.getId())
-                .description("User Service")
+                .description("Property Service")
                 .version("1.0")
                 .termsOfServiceUrl("http://toBeDone.com")
                 .contact(new Contact("Andrei Maimas", "http://toBeDone", "maimas.andrei@gmail.com"))

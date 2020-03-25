@@ -57,6 +57,10 @@ subprojects {
         testCompile 'org.projectlombok:lombok'
         testImplementation 'org.projectlombok:lombok'
 
+        compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+        compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+
         testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
             exclude module: "spring-boot-starter-logging"
             exclude module: "logback-classic"

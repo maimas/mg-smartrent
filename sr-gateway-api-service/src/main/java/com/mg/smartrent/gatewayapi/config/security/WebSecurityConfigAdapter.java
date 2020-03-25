@@ -1,4 +1,4 @@
-package com.mg.smartrent.gatewayapi.config;
+package com.mg.smartrent.gatewayapi.config.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
