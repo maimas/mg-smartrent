@@ -12,6 +12,7 @@ from password section of the server
 * 	[JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - Java™ Platform, Standard Edition Development Kit 
 * 	[Spring Boot](https://spring.io/projects/spring-boot) - Framework to ease the bootstrapping and development of new Spring Applications
 * 	[Eureka](https://spring.io/guides/gs/service-registration-and-discovery/) - Netflix Eureka service registry.
+* 	[Zuul](https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html) - Zuul is a JVM-based router and server-side load balancer from Netflix
 * 	[Sleuth](https://www.baeldung.com/spring-cloud-sleuth-single-application) - Distributed logging capable to trace operations between REST requests and not only.
 * 	[Zipkin](https://zipkin.io/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 * 	[Lombok](https://projectlombok.org/) - Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.

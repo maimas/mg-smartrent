@@ -20,6 +20,7 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: true
+    registry-fetch-interval-seconds: 30
     service-url:
       defaultZone: http://admin:12341234@${eureka.instance.hostname}:${server.port}/eureka
 
