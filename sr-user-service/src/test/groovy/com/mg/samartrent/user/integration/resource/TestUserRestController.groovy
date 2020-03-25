@@ -21,7 +21,6 @@ import static com.mg.samartrent.user.ModelBuilder.generateUser
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = ["eureka.client.enabled:false"]
 )
-@Stepwise
 class TestUserRestController extends IntegrationTestsSetup {
 
     @LocalServerPort
@@ -31,6 +30,7 @@ class TestUserRestController extends IntegrationTestsSetup {
     @Autowired
     private UsersRestController restController
     static boolean initialized
+    static String rootURL = ""
 
     /**
      * Spring beans cannot be initialized in setupSpec : https://github.com/spockframework/spock/issues/76
@@ -39,6 +39,7 @@ class TestUserRestController extends IntegrationTestsSetup {
         if (!initialized) {
             purgeCollection(User.class)
             mockMvc = MockMvcBuilders.standaloneSetup(restController).build()
+            rootURL = "http://localhost:$port"
             initialized = true
         }
     }
@@ -47,16 +48,15 @@ class TestUserRestController extends IntegrationTestsSetup {
 
     def "test: save user"() {
         when:
-        def url = "http://localhost:$port/rest/users"
+        def url = "$rootURL/rest/users"
         def response = doPost(mockMvc, url, dbUser).getResponse()
 
         then:
-        response.status == HttpStatus.OK.value()
+        response.status == HttpStatus.CREATED.value()
         response.getContentAsString() == ""
     }
 
     def "test: get by email"() {
-
         when:
         def url = "http://localhost:$port/rest/users?email=${dbUser.getEmail()}"
         MvcResult result = doGet(mockMvc, url)
@@ -72,7 +72,6 @@ class TestUserRestController extends IntegrationTestsSetup {
     }
 
     def "test: get by email in-existent user"() {
-
         when:
         def url = "http://localhost:$port/rest/users?email=test.test@gmail.com"
         MvcResult result = doGet(mockMvc, url)
@@ -108,25 +107,6 @@ class TestUserRestController extends IntegrationTestsSetup {
         result.getResponse().contentAsString == ""
     }
 
-    def "test: user exists"() {
-        when:
-        def url = "http://localhost:$port/rest/users?exists=${dbUser.getTrackingId()}"
-        MvcResult result = doGet(mockMvc, url)
-
-        then:
-        result.getResponse().getStatus() == HttpStatus.OK.value()
-        result.getResponse().getContentAsString() == "true"
-    }
-
-    def "test: user exists for in-existent user"() {
-        when:
-        def url = "http://localhost:$port/rest/users?exists=123123"
-        MvcResult result = doGet(mockMvc, url)
-
-        then:
-        result.getResponse().getStatus() == HttpStatus.OK.value()
-        result.getResponse().getContentAsString() == "false"
-    }
 
 }
 
