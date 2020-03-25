@@ -15,6 +15,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import java.math.BigInteger;
+import java.util.Objects;
+
 import static com.mg.smartrent.domain.enrichment.ModelEnricher.enrich;
 import static com.mg.smartrent.domain.validation.ModelValidator.validate;
 
@@ -56,9 +59,17 @@ public class UserService {
             throw new ModelBusinessValidationException("Could not update. User does not exists.");
         }
         if (StringUtils.isBlank(model.getPassword())) {
-            throw new ModelValidationException("User could not be updated. Password not specified.");
+            throw new ModelBusinessValidationException("User could not be updated. Password not specified.");
         }
-        model.setPassword(passwordEncoder.encode(model.getPassword()));
+
+        User dbUser = findById(model.getId());
+        if (!Objects.equals(dbUser.getTrackingId(), model.getTrackingId())) {
+            throw new ModelBusinessValidationException("User trackingId is not allowed to be updated.");
+        }
+
+        if (!Objects.equals(dbUser.getPassword(), model.getPassword())) {
+            model.setPassword(passwordEncoder.encode(model.getPassword()));
+        }
 
         enrich(model);
         validate(model);
@@ -74,6 +85,11 @@ public class UserService {
     public User findByEmail(@NotNull @NotBlank @Email String email) {
         log.info("Searching user by trackingId: " + email);
         return queryService.findOneBy("email", email, User.class);
+    }
+
+    private User findById(@NotNull @NotBlank BigInteger id) {
+        log.info("Searching user by id: " + id);
+        return queryService.findOneBy("id", id, User.class);
     }
 
 }

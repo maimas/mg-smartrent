@@ -6,9 +6,7 @@ import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import com.mg.smartrent.user.service.UserService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
@@ -39,7 +37,7 @@ public class PostConstructor {
             admin = userService.save(admin);
 
             admin.setStatus(EnUserStatus.Active.name());
-            userService.save(admin);
+            userService.update(admin);
 
             log.info("Sys Admin user created.");
         }
