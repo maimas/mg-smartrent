@@ -1,8 +1,5 @@
 # mg-smartrent
 
-Configure your maven git repository since gradle is looking at the token 
-from password section of the server
-
 # SmartRent Application Backend
  This is a backend of an application designed to report and review Renters, manage renting process, property and related issues, requests or offers. 
 
@@ -13,6 +10,7 @@ from password section of the server
 * 	[Spring Boot](https://spring.io/projects/spring-boot) - Framework to ease the bootstrapping and development of new Spring Applications
 * 	[Eureka](https://spring.io/guides/gs/service-registration-and-discovery/) - Netflix Eureka service registry.
 * 	[Zuul](https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html) - Zuul is a JVM-based router and server-side load balancer from Netflix
+* 	[Swagger](https://swagger.io) - Swagger is an open-source software framework backed by a large ecosystem of tools that helps developers design, build, document, and consume RESTful web services
 * 	[Sleuth](https://www.baeldung.com/spring-cloud-sleuth-single-application) - Distributed logging capable to trace operations between REST requests and not only.
 * 	[Zipkin](https://zipkin.io/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 * 	[Lombok](https://projectlombok.org/) - Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
@@ -29,16 +27,18 @@ from password section of the server
 - [ ] Integrate application with Jenkins CI/CD. Create jobs that can be bootstraped from Git
 
 ## Running the application
-#####Prerequisites:
+###### Prerequisites:
 - Java 1.8
 - Docker
+- Maven - configured with GitHub (*Configure your maven git repository since gradle is looking at the token 
+from password section of the server*)
 
-##### Run the app:
+###### Run the app:
 The fastest way to start the application is to build it locally and generate docker containers for each of the Microservices - then run docker images 
 1. Run gradle command ``gradlew build`` - this will generate distribution packages for all the MicroServices and local Docker images.
 2. Run command in your terminal ``docker-compose up`` - this will start all the services in a docker compose locally.
 
-#####App monitoring URLs:
+###### App monitoring URLs:
 |Endpoint|UI Name|Description|
 |--------|------------|-----------|
 |http://localhost:8081/ |Eureka Dashboard |Provides and overview of Ecosystem Microservices. Default UI user is `admin` pass `12341234`|
@@ -87,5 +87,4 @@ This Project uses GitHub's integrated issue tracking system to record bugs and f
 
 
 ## License
-TBD
-<!--[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSpring-Boot-Framework%2FSpring-Boot-Application-Template.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FSpring-Boot-Framework%2FSpring-Boot-Application-Template?ref=badge_large)-->
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmaimas%2Fmg-smartrent.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmaimas%2Fmg-smartrent?ref=badge_large)
