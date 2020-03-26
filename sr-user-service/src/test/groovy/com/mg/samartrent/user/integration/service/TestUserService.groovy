@@ -5,6 +5,7 @@ import com.mg.samartrent.user.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.enums.EnGender
 import com.mg.smartrent.domain.enums.EnUserStatus
 import com.mg.smartrent.domain.models.User
+import com.mg.smartrent.domain.validation.ModelBusinessValidationException
 import com.mg.smartrent.user.UserApplication
 import com.mg.smartrent.user.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,6 +62,74 @@ class TestUserService extends IntegrationTestsSetup {
         dbUser.getDateOfBirth() != null
         passwordEncoder.matches("12341234", dbUser.getPassword())
 
+    }
+
+    def "test: update user"() {
+
+        setup: "saving a new user"
+        dbUser = userService.save(generateUser())
+        Date newDOB = new Date(System.currentTimeMillis() - 1000000000000);
+
+        when:
+        dbUser.setFirstName("FNameUpdated")
+        dbUser.setLastName("LNameUpdated")
+        dbUser.setEmail("test.test@gmail.com")
+
+        dbUser.setStatus(EnUserStatus.Active.name())
+        dbUser.setDateOfBirth(newDOB)
+        dbUser.setGender(EnGender.Female.name())
+        dbUser.setEnabled(true)
+        dbUser.setPassword("12341234")
+        userService.update(dbUser)
+
+        then: "successfully updated"
+        dbUser.getTrackingId() != null
+        dbUser.getCreatedDate() != null
+        dbUser.getModifiedDate() != null
+        dbUser.getFirstName() == "FNameUpdated"
+        dbUser.getLastName() == "LNameUpdated"
+        dbUser.getEmail() == "test.test@gmail.com"
+        dbUser.getStatus() == EnUserStatus.Active.name()
+        passwordEncoder.matches("12341234", dbUser.getPassword())
+        dbUser.getGender() == EnGender.Female.name()
+        dbUser.getDateOfBirth() == newDOB
+    }
+
+    def "test: update user with a new trackingId"() {
+        setup: "saving a new user"
+        def otherUser = userService.save(generateUser());
+        dbUser = userService.save(generateUser())
+
+        when:
+        dbUser.setTrackingId(otherUser.trackingId)
+        userService.update(dbUser)
+
+        then:
+        ModelBusinessValidationException e = thrown()
+        e.getMessage() == "User trackingId is not allowed to be updated."
+    }
+
+    def "test: update user with null password"() {
+        setup: "saving a new user"
+        dbUser = userService.save(generateUser())
+
+        when:
+        dbUser.setPassword(null)
+        userService.update(dbUser)
+
+        then:
+        ModelBusinessValidationException e = thrown()
+        e.getMessage() == "User could not be updated. Password not specified."
+    }
+
+    def "test: update user that does not exists"() {
+        when:
+        dbUser = generateUser()
+        userService.update(dbUser)
+
+        then:
+        ModelBusinessValidationException e = thrown()
+        e.getMessage() == "Could not update. User does not exists."
     }
 
     def "test: find user by trackingId"() {

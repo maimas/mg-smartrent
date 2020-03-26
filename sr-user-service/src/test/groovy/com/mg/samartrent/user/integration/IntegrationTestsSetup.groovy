@@ -55,6 +55,14 @@ class IntegrationTestsSetup extends Specification {
                 .andReturn()
     }
 
+    MvcResult doPut(MockMvc mockMvc, String restUri, Object model) {
+        return mockMvc
+                .perform(MockMvcRequestBuilders.put(restUri)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(model)))
+                .andReturn()
+    }
+
     MvcResult doPost(MockMvc mockMvc, String restUri, List models) {
         return mockMvc
                 .perform(MockMvcRequestBuilders.post(restUri)

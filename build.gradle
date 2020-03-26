@@ -15,13 +15,13 @@ plugins {
 }
 
 project.group = 'com.maigroup.smartrent'
-
 ext {
     set('springCloudVersion', "Hoxton.SR1")//todo: upgrade to Hoxton.SR3
 }
 
 ext.dockerRepoName = 'maimas'
 ext.mavenGitHubID = 'github'
+ext.mavenGitHubRepoURI = 'https://maven.pkg.github.com/maimas/mg-smartrent'
 ext.mavenSettings = new cn.home1.tools.maven.SettingsDecoder();//GIT token used during release task by the axon plugin
 ext.gitHubUser = ext.mavenSettings.getText("//server[id='${mavenGitHubID}']/username/text()")
 ext.gitHubPass = ext.mavenSettings.getText("//server[id='${mavenGitHubID}']/password/text()")
@@ -42,7 +42,7 @@ subprojects {
     repositories {
         maven {
             name = mavenGitHubID // must be equal to id in ~/.m2/settings.xml file!
-            url = uri("https://maven.pkg.github.com/maimas/mg-smartrent")
+            url = uri(mavenGitHubRepoURI)
         }
         mavenLocal()
         mavenCentral()
@@ -57,13 +57,17 @@ subprojects {
         testCompile 'org.projectlombok:lombok'
         testImplementation 'org.projectlombok:lombok'
 
+        compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+        compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+
         testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
             exclude module: "spring-boot-starter-logging"
             exclude module: "logback-classic"
         }
         testImplementation(group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.mongo')
-        testImplementation(group: 'org.spockframework', name: 'spock-core', version: "${project['spockframework.verson']}")
-        testImplementation(group: 'org.spockframework', name: 'spock-spring', version: "${project['spockframework.verson']}")
+        testImplementation(group: 'org.spockframework', name: 'spock-core', version: "${project['spockframework.version']}")
+        testImplementation(group: 'org.spockframework', name: 'spock-spring', version: "${project['spockframework.version']}")
     }
 
     dependencyManagement {

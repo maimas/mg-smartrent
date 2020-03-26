@@ -9,6 +9,8 @@
 * 	[JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) - Java™ Platform, Standard Edition Development Kit 
 * 	[Spring Boot](https://spring.io/projects/spring-boot) - Framework to ease the bootstrapping and development of new Spring Applications
 * 	[Eureka](https://spring.io/guides/gs/service-registration-and-discovery/) - Netflix Eureka service registry.
+* 	[Zuul](https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html) - Zuul is a JVM-based router and server-side load balancer from Netflix
+* 	[Swagger](https://swagger.io) - Swagger is an open-source software framework backed by a large ecosystem of tools that helps developers design, build, document, and consume RESTful web services
 * 	[Sleuth](https://www.baeldung.com/spring-cloud-sleuth-single-application) - Distributed logging capable to trace operations between REST requests and not only.
 * 	[Zipkin](https://zipkin.io/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 * 	[Lombok](https://projectlombok.org/) - Never write another getter or equals method again, with one annotation your class has a fully featured builder, Automate your logging variables, and much more.
@@ -18,6 +20,7 @@
 * 	[Axion](https://axion-release-plugin.readthedocs.io/en/latest/configuration/basic_usage/) - Release management plugin 
 
 ## To-Do
+- [ ] Document the API
 - [ ] Secure REST endpoints
 - [ ] Persist logs reported to the Zipkin Server
 - [ ] Externalize application configuration (use Spring Config Server)
@@ -39,20 +42,8 @@ The fastest way to start the application is to build it locally and generate doc
 |Endpoint|UI Name|Description|
 |--------|------------|-----------|
 |http://localhost:8081/ |Eureka Dashboard |Provides and overview of Ecosystem Microservices. Default UI user is `admin` pass `12341234`|
+|http://localhost:8081/swagger-ui.html |API Documentation |Provides a very nice documentation that describes the application API. |
 |http://localhost:9411/zipkin/ |Zipkin Dashboard |Provides access to application logs that are aggregated from all the services. |
-
-###### App REST endpoints:
-Routing is realized trough Zuul framework integrated in the Gateway API service.
-
-|Endpoint|Verb     |Service Name|Description|
-|--------|---------|------------|-----------|
-|http://localhost:8081/user-service/rest/users |POST|User service |Creates or updates the user|
-|http://localhost:8081/user-service/rest/users/{trackingID}|GET|User service |Get the user by TrackingId|
-|http://localhost:8081/user-service/rest/users/{email}|GET|User service |Get the user by Email|
-|http://localhost:8081/user-service/rest/users?exists={trackingID}|GET|User service |Check is the user exists|
-|TODO: describe rest of the endpoints|||
-|http://localhost:8081/property-service/rest/<endpoint>|POST|Property service |Provides access to Property domain|
-|http://localhost:8081/renter-service/rest/<endpoint> |POST|Renter service |Provides access to Renter domain|
 
 ##### Other Gradle commands
 - ``gradlew removeAllDockerImages`` - remove forcefully ALL local images.  
