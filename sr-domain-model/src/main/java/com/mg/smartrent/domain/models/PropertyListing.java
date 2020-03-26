@@ -4,6 +4,7 @@ package com.mg.smartrent.domain.models;
 import com.mg.smartrent.domain.validation.annotations.PositiveDateRange;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @PositiveDateRange(start = "checkInDate", end = "checkOutDate", message = "CheckIn Date should not be greater than CheckOut Date")
 public class PropertyListing extends BizItem {
@@ -37,7 +39,4 @@ public class PropertyListing extends BizItem {
 
     private boolean listed;
 
-    public PropertyListing() {
-
-    }
 }

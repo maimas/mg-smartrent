@@ -6,6 +6,7 @@ import com.mg.smartrent.domain.validation.annotations.PhoneNumber;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -14,34 +15,32 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Renter extends BizItem {
 
     @NotNull
     @Size(min = 1, max = 100)
-    public String firstName;
+    private String firstName;
 
     @NotNull
     @Size(min = 1, max = 100)
-    public String lastName;
+    private String lastName;
 
     @Past
-    public Date dateOfBirth;
+    private Date dateOfBirth;
 
     @NotNull
     @Email
     @Size(min = 1, max = 100)
-    public String email;
+    private String email;
 
     @Size(min = 1, max = 100)
     @PhoneNumber
-    public String phoneNumber;
+    private String phoneNumber;
 
     @NotNull
     @ValueOfEnum(enumClass = EnGender.class)
-    public String gender;
+    private String gender;
 
-    public Renter() {
-
-    }
 }

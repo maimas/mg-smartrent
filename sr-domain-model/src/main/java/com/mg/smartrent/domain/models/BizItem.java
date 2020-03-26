@@ -2,6 +2,7 @@ package com.mg.smartrent.domain.models;
 
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Data
-
+@NoArgsConstructor
 public abstract class BizItem {
 
     private BigInteger id;
@@ -26,10 +27,4 @@ public abstract class BizItem {
 
     @NotNull
     private Date modifiedDate;
-
-
-    public BizItem() {
-    }
-
-
 }

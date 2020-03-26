@@ -5,12 +5,14 @@ import com.mg.smartrent.domain.enums.EnPropertyCondition;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Property extends BizItem {
 
@@ -37,9 +39,5 @@ public class Property extends BizItem {
 
     private byte[] thumbnail;
     private boolean parkingAvailable;
-
-    public Property() {
-
-    }
 
 }
