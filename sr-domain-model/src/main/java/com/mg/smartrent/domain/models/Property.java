@@ -3,6 +3,7 @@ package com.mg.smartrent.domain.models;
 import com.mg.smartrent.domain.enums.EnBuildingType;
 import com.mg.smartrent.domain.enums.EnPropertyCondition;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
+import com.mysema.query.annotations.QueryEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@QueryEntity
 public class Property extends BizItem {
 
     @NotNull

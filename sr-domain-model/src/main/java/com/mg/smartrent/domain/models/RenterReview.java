@@ -1,6 +1,7 @@
 package com.mg.smartrent.domain.models;
 
 
+import com.mysema.query.annotations.QueryEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
+@QueryEntity
 public class RenterReview extends BizItem {
 
     @NotNull
