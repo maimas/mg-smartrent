@@ -3,6 +3,7 @@ package com.mg.smartrent.domain.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
+@FieldNameConstants
 public abstract class BizItem {
 
     private BigInteger id;

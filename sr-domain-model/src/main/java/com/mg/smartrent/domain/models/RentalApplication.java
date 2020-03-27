@@ -4,10 +4,10 @@ import com.mg.smartrent.domain.enums.EnCurrency;
 import com.mg.smartrent.domain.enums.EnRentalApplicationStatus;
 import com.mg.smartrent.domain.validation.annotations.PositiveDateRange;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
-import com.mysema.query.annotations.QueryEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -18,7 +18,7 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @PositiveDateRange(start = "checkInDate", end = "checkOutDate", message = "CheckIn Date should not be greater than CheckOut Date")
-@QueryEntity
+@FieldNameConstants
 public class RentalApplication extends BizItem {
 
     @NotNull

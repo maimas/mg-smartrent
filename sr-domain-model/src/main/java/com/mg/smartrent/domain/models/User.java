@@ -5,22 +5,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mg.smartrent.domain.enums.EnGender;
 import com.mg.smartrent.domain.enums.EnUserStatus;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
-import com.mysema.query.annotations.QueryEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldNameConstants;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
-import java.beans.Transient;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@QueryEntity
+@FieldNameConstants
 public class User extends BizItem {
 
     @NotNull
