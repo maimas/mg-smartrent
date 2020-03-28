@@ -11,13 +11,13 @@ public class ModelEnricher {
             model.setCreatedDate(new Date(System.currentTimeMillis()));
         }
 
-        if (model.getTrackingId() == null) {
-            model.setTrackingId(TrackingIdGenerator.generateUnique());
-        }
-
-        if (model.getTrackingId() != null) {
-            model.setTrackingId(model.getTrackingId().trim());
-        }
+//        if (model.getTrackingId() == null) {
+//            model.setTrackingId(TrackingIdGenerator.generateUnique());
+//        }
+//
+//        if (model.getTrackingId() != null) {
+//            model.setTrackingId(model.getTrackingId().trim());
+//        }
 
         model.setModifiedDate(new Date(System.currentTimeMillis()));
     }

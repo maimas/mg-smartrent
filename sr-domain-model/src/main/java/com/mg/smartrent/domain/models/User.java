@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mg.smartrent.domain.enums.EnGender;
 import com.mg.smartrent.domain.enums.EnUserStatus;
 import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
+import io.leangen.graphql.annotations.GraphQLIgnore;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
 
@@ -42,13 +43,13 @@ public class User extends BizItem {
 
     @NotNull
     @Size(min = 6, max = 1000)
-    @Getter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)})
+    @Getter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.WRITE_ONLY), @GraphQLIgnore})
     private String password;
 
     @ValueOfEnum(enumClass = EnUserStatus.class)
     private String status;
 
-    @Setter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.READ_ONLY)})
+    @Setter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.READ_ONLY), @GraphQLIgnore})
     private boolean enabled;
 
 
