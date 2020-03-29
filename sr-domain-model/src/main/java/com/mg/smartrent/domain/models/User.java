@@ -1,9 +1,9 @@
 package com.mg.smartrent.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mg.smartrent.domain.enums.EnGender;
 import com.mg.smartrent.domain.enums.EnUserStatus;
-import com.mg.smartrent.domain.validation.annotations.ValueOfEnum;
 import io.leangen.graphql.annotations.GraphQLIgnore;
 import lombok.*;
 import lombok.experimental.FieldNameConstants;
@@ -33,7 +33,6 @@ public class User extends BizItem {
     private Date dateOfBirth;
 
     @NotNull
-//    @ValueOfEnum(enumClass = EnGender.class)
     private EnGender gender;
 
     @NotNull
@@ -43,13 +42,21 @@ public class User extends BizItem {
 
     @NotNull
     @Size(min = 6, max = 1000)
-    @Getter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.WRITE_ONLY), @GraphQLIgnore})
+    @JsonIgnore
+//    @Getter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.READ_ONLY), @GraphQLIgnore})
+//    @Setter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)})
+    @Getter(onMethod_ = {@JsonIgnore, @GraphQLIgnore})
+    @Setter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.READ_WRITE)})
+    /**
+     * Json annotations are used to address security concerns:
+     *  - when MODEL is converted in to JSON - password is ignored
+     *  - when JSON is converted in to MODEL - password present
+     * */
     private String password;
 
-//    @ValueOfEnum(enumClass = EnUserStatus.class)
+    @NotNull
     private EnUserStatus status;
 
-    @Setter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.READ_ONLY), @GraphQLIgnore})
     private boolean enabled;
 
 

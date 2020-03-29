@@ -15,15 +15,9 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @FieldNameConstants
-public abstract class BizItem implements Cloneable{
+public abstract class BizItem implements Cloneable {
 
-    private BigInteger id;
-
-//    @NotNull
-//    @NotBlank
-//    @Size(min = 5, max = 100, message = "TrackingID must be between 5 and 100 characters")
-//    @Deprecated
-//    private String trackingId;
+    private String id;
 
     @NotNull
     @PastOrPresent
