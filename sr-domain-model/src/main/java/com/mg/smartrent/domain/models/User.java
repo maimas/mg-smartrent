@@ -30,11 +30,11 @@ public class User extends BizItem {
 
     @NotNull
     @Past
-    public Date dateOfBirth;
+    private Date dateOfBirth;
 
     @NotNull
-    @ValueOfEnum(enumClass = EnGender.class)
-    private String gender;
+//    @ValueOfEnum(enumClass = EnGender.class)
+    private EnGender gender;
 
     @NotNull
     @Email
@@ -46,8 +46,8 @@ public class User extends BizItem {
     @Getter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.WRITE_ONLY), @GraphQLIgnore})
     private String password;
 
-    @ValueOfEnum(enumClass = EnUserStatus.class)
-    private String status;
+//    @ValueOfEnum(enumClass = EnUserStatus.class)
+    private EnUserStatus status;
 
     @Setter(onMethod_ = {@JsonProperty(access = JsonProperty.Access.READ_ONLY), @GraphQLIgnore})
     private boolean enabled;
