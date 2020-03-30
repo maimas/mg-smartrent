@@ -1,18 +1,21 @@
 package com.mg.smartrent.renter.resource;
 
 
+import com.mg.smartrent.domain.models.BizItem;
 import com.mg.smartrent.domain.models.Renter;
 import com.mg.smartrent.domain.models.RenterReview;
 import com.mg.smartrent.domain.models.RenterView;
 import com.mg.smartrent.domain.validation.ModelValidationException;
-import com.mg.smartrent.renter.service.RenterReviewService;
-import com.mg.smartrent.renter.service.RenterService;
-import com.mg.smartrent.renter.service.RenterViewsService;
+import com.mg.smartrent.renter.services.RenterReviewService;
+import com.mg.smartrent.renter.services.RenterService;
+import com.mg.smartrent.renter.services.RenterViewsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/rest/renters")
@@ -30,9 +33,12 @@ public class RenterRestController {
 
 
     @PostMapping
-    public ResponseEntity saveRenter(@RequestBody Renter renter) throws ModelValidationException {
-        renterService.save(renter);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<HashMap<String, Object>> saveRenter(@RequestBody Renter renter) throws ModelValidationException {
+        renter = renterService.save(renter);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(BizItem.Fields.id, renter.getId());
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @GetMapping(params = "email")
@@ -40,26 +46,32 @@ public class RenterRestController {
         return new ResponseEntity<>(renterService.findByEmail(email), HttpStatus.OK);
     }
 
-    @PostMapping("/{renterTID}/reviews")
-    public ResponseEntity saveRenterReview(@PathVariable String renterTID, @RequestBody RenterReview renterReview) throws ModelValidationException {
-        reviewService.save(renterReview);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/{renterId}/reviews")
+    public ResponseEntity<HashMap<String, Object>> saveRenterReview(@PathVariable String renterId, @RequestBody RenterReview renterReview) throws ModelValidationException {
+        renterReview = reviewService.save(renterReview);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(BizItem.Fields.id, renterReview.getId());
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @GetMapping("/{renterTID}/reviews")
-    public ResponseEntity<List<RenterReview>> getRenterReviews(@PathVariable String renterTID) {
-        return new ResponseEntity<>(reviewService.findByRenterTID(renterTID), HttpStatus.OK);
+    @GetMapping("/{renterId}/reviews")
+    public ResponseEntity<List<RenterReview>> getRenterReviews(@PathVariable String renterId) {
+        return new ResponseEntity<>(reviewService.findByRenterId(renterId), HttpStatus.OK);
     }
 
-    @PostMapping("/{renterTID}/views")
-    public ResponseEntity saveRenterView(@PathVariable String renterTID, @RequestBody RenterView renterView) throws ModelValidationException {
-        viewsService.save(renterView);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/{renterId}/views")
+    public ResponseEntity<HashMap<String, Object>> saveRenterView(@PathVariable String renterId, @RequestBody RenterView renterView) throws ModelValidationException {
+        renterView = viewsService.save(renterView);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(BizItem.Fields.id, renterView.getId());
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @GetMapping("/{renterTID}/views")
-    public ResponseEntity<Long> getRenterViewsCount(@PathVariable String renterTID) {
-        return new ResponseEntity<>(viewsService.count(renterTID), HttpStatus.OK);
+    @GetMapping("/{renterId}/views/count")
+    public ResponseEntity<Long> getRenterViewsCount(@PathVariable String renterId) {
+        return new ResponseEntity<>(viewsService.count(renterId), HttpStatus.OK);
     }
 
 }

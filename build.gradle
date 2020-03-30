@@ -50,16 +50,16 @@ subprojects {
 
     dependencies {
 
-        //Lombok Dependencies
+        //Lombok
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
         testAnnotationProcessor 'org.projectlombok:lombok'
         testCompile 'org.projectlombok:lombok'
         testImplementation 'org.projectlombok:lombok'
 
-        compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-        compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
-
+        //Swagger
+        implementation group: 'io.springfox', name: 'springfox-swagger2', version: "${project['swagger.version']}"
+        implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: "${project['swagger.version']}"
 
         testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test') {
             exclude module: "spring-boot-starter-logging"

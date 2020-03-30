@@ -3,7 +3,7 @@ package com.mg.samartrent.renter.integration.service
 import com.mg.samartrent.renter.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.RenterView
 import com.mg.smartrent.renter.RenterApplication
-import com.mg.smartrent.renter.service.RenterViewsService
+import com.mg.smartrent.renter.services.RenterViewsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -37,20 +37,20 @@ class TestRenterViewsService extends IntegrationTestsSetup {
         def dbReview = viewsService.save(view)
 
         then: "successfully saved"
-        dbReview.getTrackingId() != null
+        dbReview.getId() != null
         dbReview.getCreatedDate() != null
         dbReview.getModifiedDate() != null
-        dbReview.getUserTID() == view.getUserTID()
-        dbReview.getRenterTID() == view.getRenterTID()
+        dbReview.getUserId() == view.getUserId()
+        dbReview.getRenterId() == view.getRenterId()
     }
 
-    def "test: get count of Views by renter TID"() {
+    def "test: get count of Views by renter Id"() {
         setup:
         RenterView view = generateRenterView()
         viewsService.save(view)
 
         when:
-        Long count = viewsService.count(view.getRenterTID())
+        Long count = viewsService.count(view.getRenterId())
 
         then:
         count == 1

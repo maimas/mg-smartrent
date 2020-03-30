@@ -3,9 +3,9 @@ package com.mg.samartrent.user.unit
 import com.mg.persistence.service.QueryService
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.service.PropertyListingService
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.ExternalUserService
+import com.mg.smartrent.property.services.PropertyListingService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.ExternalUserService
 import org.junit.Assert
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -50,8 +50,8 @@ class TestPropertyListingValidation extends Specification {
 
         setup: "mock db call and user exists call"
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(model.getUserTID())).thenReturn(true)//mock external service call
-        when(propertyService.findByTrackingId(model.getPropertyTID())).thenReturn(generateProperty())//mock property as it already exists
+        when(userService.userExists(model.getUserId())).thenReturn(true)//mock external service call
+        when(propertyService.findById(model.getPropertyId())).thenReturn(generateProperty())//mock property as it already exists
         when(queryService.save(model)).thenReturn(model)//mock db call
 
         when: "saving listing with a new test value"
@@ -70,25 +70,26 @@ class TestPropertyListingValidation extends Specification {
             Assert.assertEquals(13, beanUtilsWrapper.getProperties().size())//13 properties
 
         } catch (Exception e) {
-            Assert.assertTrue(e.getMessage().contains(errorMsg))
+            def explanation = "ACTUAL: ${e.getMessage().trim()}\nShould countain\nEXPECTED: $errorMsg"
+            Assert.assertTrue(explanation, e.getMessage().contains(errorMsg))
         }
         where:
         model                     | field          | value                                  | expectException | errorMsg
-        generatePropertyListing() | 'userTID'      | null                                   | true            | "Listing could not be saved. User not found, UserTID = null"
-        generatePropertyListing() | 'userTID'      | ""                                     | true            | "Listing could not be saved. User not found, UserTID ="
-        generatePropertyListing() | 'userTID'      | "inValidUserID"                        | true            | "Listing could not be saved. User not found, UserTID = inValidUserID"
-        generatePropertyListing() | 'userTID'      | "mockedUserId"                         | false           | null
+        generatePropertyListing() | 'userId'       | null                                   | true            | 'Listing could not be saved. User not found, User Id = null'
+        generatePropertyListing() | 'userId'       | ""                                     | true            | 'Listing could not be saved. User not found, User Id = '
+        generatePropertyListing() | 'userId'       | "inValidUserID"                        | true            | 'Listing could not be saved. User not found, User Id = inValidUserID'
+        generatePropertyListing() | 'userId'       | "mockedUserId"                         | false           | null
 
-        generatePropertyListing() | 'propertyTID'  | null                                   | true            | "Listing could not be saved. Property not found."
-        generatePropertyListing() | 'propertyTID'  | ""                                     | true            | "Listing could not be saved. Property not found."
-        generatePropertyListing() | 'propertyTID'  | "inValidPropertyID"                    | true            | "Listing could not be saved. Property not found."
-        generatePropertyListing() | 'propertyTID'  | "mockedPropertyId"                     | false           | null
+        generatePropertyListing() | 'propertyId'   | null                                   | true            | "Listing could not be saved. Property not found."
+        generatePropertyListing() | 'propertyId'   | ""                                     | true            | "Listing could not be saved. Property not found."
+        generatePropertyListing() | 'propertyId'   | "inValidPropertyID"                    | true            | "Listing could not be saved. Property not found."
+        generatePropertyListing() | 'propertyId'   | "mockedPropertyId"                     | false           | null
 
-        generatePropertyListing() | 'price'        | -1                                     | true            | "Field [price], value [-1], reason [must be greater than or equal to 0]"
+        generatePropertyListing() | 'price'        | -1                                     | true            | 'Field "price" has an invalid value value "-1". [must be greater than or equal to 0]'
         generatePropertyListing() | 'price'        | 0                                      | false           | null
         generatePropertyListing() | 'price'        | 1                                      | false           | null
 
-        generatePropertyListing() | 'totalViews'   | -1                                     | true            | "Field [totalViews], value [-1], reason [must be greater than or equal to 0]"
+        generatePropertyListing() | 'totalViews'   | -1                                     | true            | 'Field "totalViews" has an invalid value value "-1". [must be greater than or equal to 0]'
         generatePropertyListing() | 'totalViews'   | 0                                      | false           | null
         generatePropertyListing() | 'totalViews'   | 1                                      | false           | null
 

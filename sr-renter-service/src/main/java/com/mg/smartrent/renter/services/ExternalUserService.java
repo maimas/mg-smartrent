@@ -1,4 +1,4 @@
-package com.mg.smartrent.renter.service;
+package com.mg.smartrent.renter.services;
 
 
 import com.mg.smartrent.domain.models.User;
@@ -25,11 +25,11 @@ public class ExternalUserService {
         this.restTemplate = restTemplate;
     }
 
-    public Boolean userExists(@NotNull @NotBlank String userTID) {
-        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users?exists=" + userTID);
-        ResponseEntity<Boolean> response = restTemplate.getForEntity(uri, Boolean.class);
+    public Boolean userExists(@NotNull @NotBlank String userId) {
+        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users/" + userId);
+        ResponseEntity<User> response = restTemplate.getForEntity(uri, User.class);
 
-        return response.getBody();
+        return response.getBody() != null;
     }
 
     public User getUserByEmail(@NotNull @NotBlank @Email String email) {

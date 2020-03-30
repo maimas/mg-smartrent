@@ -13,6 +13,7 @@
 * 	[Zipkin](https://www.zipkin.com/) - Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data.
 * 	[Docker](https://www.docker.com/) - Docker is a set of platform as a service products that uses OS-level virtualization to deliver software in packages called containers..
 * 	[Valid4j](http://www.valid4j.org/) - valid4j is a simple assertion and validation library for Java which makes it possible to use your favorite hamcrest-matchers to express pre- and post-conditions in your code in a design by contract style.
+* 	[GraphQL](https://www.graphql.com/) - GraphQL is an open-source data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data.
 
 ## To-Do
 - [x] Register service with Gateway API

@@ -1,28 +1,18 @@
 package com.mg.samartrent.renter.unit
 
-import com.mg.smartrent.domain.models.Renter
-import com.mg.smartrent.domain.models.RenterReview
+
 import com.mg.smartrent.domain.models.RenterView
 import com.mg.smartrent.renter.RenterApplication
-import com.mg.smartrent.renter.service.ExternalUserService
-import com.mg.smartrent.renter.service.RenterReviewService
-import com.mg.smartrent.renter.service.RenterService
-import com.mg.smartrent.renter.service.RenterViewsService
+import com.mg.smartrent.renter.services.RenterViewsService
 import org.junit.Assert
-import org.mockito.InjectMocks
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.BeanWrapperImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static com.mg.samartrent.renter.TestUtils.generateRenterReview
 import static com.mg.samartrent.renter.TestUtils.generateRenterView
 import static org.apache.commons.lang.RandomStringUtils.random
-import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic
-import static org.mockito.Mockito.when
 
 /**
  * This tests suite is designed to ensure correctness of the model validation constraints.
@@ -64,15 +54,15 @@ class TestRenterViewValidation extends Specification {
 
         where:
         model                | field       | value        | expectedValue | expectException | checkContains | errorMsg
-        generateRenterView() | 'userTID'   | null         | "unknown"     | false           | false         | null
-        generateRenterView() | 'userTID'   | ""           | null          | true            | false         | "Field [userTID], value [], reason [size must be between 1 and 100]"
-        generateRenterView() | 'userTID'   | random(1000) | null          | true            | true          | "[size must be between 1 and 100]"
-        generateRenterView() | 'userTID'   | "TEST"       | "TEST"        | false           | false         | null
+        generateRenterView() | 'userId'   | null         | "unknown"     | false           | false         | null
+        generateRenterView() | 'userId'   | ""           | null          | true            | false         | 'Field "userId" has an invalid value value "". [size must be between 1 and 100]'
+        generateRenterView() | 'userId'   | random(1000) | null          | true            | true          | "[size must be between 1 and 100]"
+        generateRenterView() | 'userId'   | "TEST"       | "TEST"        | false           | false         | null
 
-        generateRenterView() | 'renterTID' | null         | null          | true            | false         | "Field [renterTID], value [null], reason [must not be null]"
-        generateRenterView() | 'renterTID' | ""           | null          | true            | false         | "Field [renterTID], value [], reason [size must be between 1 and 100]"
-        generateRenterView() | 'renterTID' | random(1000) | null          | true            | true          | "[size must be between 1 and 100]"
-        generateRenterView() | 'renterTID' | "LName"      | "LName"       | false           | false         | null
+        generateRenterView() | 'renterId' | null         | null          | true            | false         | 'Field "renterId" has an invalid value value "null". [must not be null]'
+        generateRenterView() | 'renterId' | ""           | null          | true            | false         | 'Field "renterId" has an invalid value value "". [size must be between 1 and 100]'
+        generateRenterView() | 'renterId' | random(1000) | null          | true            | true          | "[size must be between 1 and 100]"
+        generateRenterView() | 'renterId' | "LName"      | "LName"       | false           | false         | null
 
     }
 

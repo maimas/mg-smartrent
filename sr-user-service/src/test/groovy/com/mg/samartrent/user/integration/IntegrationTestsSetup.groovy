@@ -1,5 +1,6 @@
 package com.mg.samartrent.user.integration
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.flapdoodle.embed.mongo.MongodExecutable
 import de.flapdoodle.embed.mongo.MongodStarter
@@ -39,21 +40,22 @@ class IntegrationTestsSetup extends Specification {
 
     void purgeCollection(Class entityClazz) {
         mongoTemplate.remove(new Query(Criteria.where("_id").exists(true)), entityClazz)
-        println "Collection ${entityClazz.simpleName} purged."
-    }
-
-    MvcResult doPost(MockMvc mockMvc, String restUri) {
-        return mockMvc.perform(MockMvcRequestBuilders.post(restUri).contentType(MediaType.APPLICATION_JSON)).andReturn()
+        println("Collection ${entityClazz.simpleName} purged.")
     }
 
 
     MvcResult doPost(MockMvc mockMvc, String restUri, Object model) {
+        if (!(model instanceof String)) {
+            model = new ObjectMapper().writeValueAsString(model)
+        }
+
         return mockMvc
                 .perform(MockMvcRequestBuilders.post(restUri)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(model)))
+                        .content((String) model))
                 .andReturn()
     }
+
 
     MvcResult doPut(MockMvc mockMvc, String restUri, Object model) {
         return mockMvc
@@ -80,11 +82,24 @@ class IntegrationTestsSetup extends Specification {
         return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), modelClass)
     }
 
+    JsonNode mvcResultToJsonNode(MvcResult result) {
+        return new ObjectMapper().readTree(result.getResponse().getContentAsString())
+    }
 
-//    List mvcResultToModels(MvcResult mvcResult) {
-//        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<BizItemModel>>() {
-//        })
-//    }
+    String readGraphQLResult(MvcResult result, String... pathFields) {
+        def node = mvcResultToJsonNode(result)
+        for (String field : pathFields) {
+            node = node.path(field)
+        }
+
+        return node.toString()
+    }
+
+    Object readGraphQLResult(MvcResult result, Class modelClass, String... pathFields) {
+        String model = readGraphQLResult(result, modelClass, pathFields)
+        return new ObjectMapper().readValue(model, modelClass)
+    }
+
 
     private static void startEmbeddedMongo() {
         MongodStarter starter = MongodStarter.getDefaultInstance()

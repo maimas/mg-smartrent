@@ -1,0 +1,15 @@
+mutation ($id: String!, $enabled: Boolean!) {
+    enable(id: $id, enable: $enabled) {
+        id
+        createdDate
+        modifiedDate
+        firstName
+        lastName
+        dateOfBirth
+        gender
+        email
+        status
+        enabled
+        #password //this is hiden
+    }
+}

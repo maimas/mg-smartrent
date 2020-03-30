@@ -3,18 +3,16 @@ package com.mg.samartrent.renter.unit
 import com.mg.smartrent.domain.models.Renter
 import com.mg.smartrent.domain.models.RenterReview
 import com.mg.smartrent.renter.RenterApplication
-import com.mg.smartrent.renter.service.ExternalUserService
-import com.mg.smartrent.renter.service.RenterReviewService
-import com.mg.smartrent.renter.service.RenterService
+import com.mg.smartrent.renter.services.ExternalUserService
+import com.mg.smartrent.renter.services.RenterReviewService
+import com.mg.smartrent.renter.services.RenterService
 import org.junit.Assert
 import org.mockito.InjectMocks
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.BeanWrapperImpl
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 import static org.mockito.Mockito.when
@@ -54,8 +52,8 @@ class TestRenterReviewValidation extends Specification {
         beanUtilsWrapper.setPropertyValue(field, value)
         //mock dependent services
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(model.getUserTID())).thenReturn(true)
-        when(renterService.findByTrackingId(model.getRenterTID())).thenReturn(new Renter())
+        when(userService.userExists(model.getUserId())).thenReturn(true)
+        when(renterService.findById(model.getRenterId())).thenReturn(new Renter())
 
 
         then: "expectations are meet"
@@ -76,31 +74,31 @@ class TestRenterReviewValidation extends Specification {
         }
 
         where:
-        model                  | field       | value                  | expectedValue     | expectException | checkContains | errorMsg
-        generateRenterReview() | 'userTID'   | null                   | null              | true            | false         | "Field [userTID], value [null], reason [must not be null]"
-        generateRenterReview() | 'userTID'   | ""                     | null              | true            | false         | "Field [userTID], value [], reason [size must be between 1 and 100]"
-        generateRenterReview() | 'userTID'   | longString             | null              | true            | true          | "[size must be between 1 and 100]"
-        generateRenterReview() | 'userTID'   | "TEST"                 | "TEST"            | false           | false         | null
+        model                  | field      | value                  | expectedValue     | expectException | checkContains | errorMsg
+        generateRenterReview() | 'userId'   | null                   | null              | true            | false         | 'Field "userId" has an invalid value value "null". [must not be null]'
+        generateRenterReview() | 'userId'   | ""                     | null              | true            | false         | 'Field "userId" has an invalid value value "". [size must be between 1 and 100]'
+        generateRenterReview() | 'userId'   | longString             | null              | true            | true          | "[size must be between 1 and 100]"
+        generateRenterReview() | 'userId'   | "TEST"                 | "TEST"            | false           | false         | null
 
-        generateRenterReview() | 'renterTID' | null                   | null              | true            | false         | "Field [renterTID], value [null], reason [must not be null]"
-        generateRenterReview() | 'renterTID' | ""                     | null              | true            | false         | "Field [renterTID], value [], reason [size must be between 1 and 100]"
-        generateRenterReview() | 'renterTID' | longString             | null              | true            | true          | "[size must be between 1 and 100]"
-        generateRenterReview() | 'renterTID' | "LName"                | "LName"           | false           | false         | null
+        generateRenterReview() | 'renterId' | null                   | null              | true            | false         | 'Field "renterId" has an invalid value value "null". [must not be null]'
+        generateRenterReview() | 'renterId' | ""                     | null              | true            | false         | 'Field "renterId" has an invalid value value "". [size must be between 1 and 100]'
+        generateRenterReview() | 'renterId' | longString             | null              | true            | true          | "[size must be between 1 and 100]"
+        generateRenterReview() | 'renterId' | "LName"                | "LName"           | false           | false         | null
 
-        generateRenterReview() | 'review'    | null                   | null              | true            | false         | "Field [review], value [null], reason [must not be null]"
-        generateRenterReview() | 'review'    | ""                     | null              | true            | false         | "Field [review], value [], reason [size must be between 1 and 1000000]"
-        generateRenterReview() | 'review'    | reviewMaxCapacityPlus1 | null              | true            | true          | "[size must be between 1 and 1000000]"
-        generateRenterReview() | 'review'    | reviewMaxCapacity      | reviewMaxCapacity | false           | false         | null
-        generateRenterReview() | 'review'    | "Test review"          | "Test review"     | false           | false         | null
+        generateRenterReview() | 'review'   | null                   | null              | true            | false         | 'Field "review" has an invalid value value "null". [must not be null]'
+        generateRenterReview() | 'review'   | ""                     | null              | true            | false         | 'Field "review" has an invalid value value "". [size must be between 1 and 1000000]'
+        generateRenterReview() | 'review'   | reviewMaxCapacityPlus1 | null              | true            | true          | "[size must be between 1 and 1000000]"
+        generateRenterReview() | 'review'   | reviewMaxCapacity      | reviewMaxCapacity | false           | false         | null
+        generateRenterReview() | 'review'   | "Test review"          | "Test review"     | false           | false         | null
 
-        generateRenterReview() | 'rating'    | 0                      | null              | true            | false         | "Field [rating], value [0], reason [must be greater than or equal to 1]"
-        generateRenterReview() | 'rating'    | -1                     | null              | true            | false         | "Field [rating], value [-1], reason [must be greater than or equal to 1]"
-        generateRenterReview() | 'rating'    | 6                      | null              | true            | false         | "Field [rating], value [6], reason [must be less than or equal to 5]"
-        generateRenterReview() | 'rating'    | 1                      | 1                 | false           | false         | null
-        generateRenterReview() | 'rating'    | 2                      | 2                 | false           | false         | null
-        generateRenterReview() | 'rating'    | 3                      | 3                 | false           | false         | null
-        generateRenterReview() | 'rating'    | 4                      | 4                 | false           | false         | null
-        generateRenterReview() | 'rating'    | 5                      | 5                 | false           | false         | null
+        generateRenterReview() | 'rating'   | 0                      | null              | true            | false         | 'Field "rating" has an invalid value value "0". [must be greater than or equal to 1]'
+        generateRenterReview() | 'rating'   | -1                     | null              | true            | false         | 'Field "rating" has an invalid value value "-1". [must be greater than or equal to 1]'
+        generateRenterReview() | 'rating'   | 6                      | null              | true            | false         | 'Field "rating" has an invalid value value "6". [must be less than or equal to 5]'
+        generateRenterReview() | 'rating'   | 1                      | 1                 | false           | false         | null
+        generateRenterReview() | 'rating'   | 2                      | 2                 | false           | false         | null
+        generateRenterReview() | 'rating'   | 3                      | 3                 | false           | false         | null
+        generateRenterReview() | 'rating'   | 4                      | 4                 | false           | false         | null
+        generateRenterReview() | 'rating'   | 5                      | 5                 | false           | false         | null
 
     }
 

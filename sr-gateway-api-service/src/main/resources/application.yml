@@ -37,3 +37,18 @@ zuul:
       path: /property-service/**
     renter-service:
       path: /renter-service/**
+
+##------------------------------------------------------------------
+##------LOGGER CONFIGURATION----------------------------------------
+##------------------------------------------------------------------
+logging:
+  file:
+    path: logs
+    name: gateway-api.log
+    max-size: 10MB
+  level:
+    com.mg: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.boot: ERROR
+    zipkin2.reporter.AsyncReporter: ERROR

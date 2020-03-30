@@ -8,8 +8,8 @@ import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.resource.PropertyListingRestController
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.ExternalUserService
 import org.apache.commons.lang.RandomStringUtils
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
@@ -45,7 +45,7 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
     private PropertyService propertyService
 
     static boolean initialized
-
+    static String rootUrl;
 
     /**
      * Spring beans cannot be initialized in setupSpec : https://github.com/spockframework/spock/issues/76
@@ -56,6 +56,7 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
             purgeCollection(Property.class)
             purgeCollection(PropertyListing.class)
             mockMvc = MockMvcBuilders.standaloneSetup(restController).build()
+            rootUrl = "http://localhost:$port/rest/propertylistings"
             initialized = true
         }
     }
@@ -73,13 +74,13 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
         response.getContentAsString() == ""
     }
 
-    def "test: get by propertyTID"() {
+    def "test: get by propertyId"() {
         setup:
         Property property = createProperty()
         createListing(property)
 
         when:
-        def url = "http://localhost:$port/rest/propertylistings?propertyTID=${property.getTrackingId()}"
+        def url = "$rootUrl?propertyId=${property.getId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -95,15 +96,15 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
         def dbPropertyListing = dbListings.get(0)
 
         then:
-        dbPropertyListing.getTrackingId() != null
-        dbPropertyListing.getPropertyTID() == property.getTrackingId()
-        dbPropertyListing.getUserTID() == property.getUserTID()
+        dbPropertyListing.getId() != null
+        dbPropertyListing.getPropertyId() == property.getId()
+        dbPropertyListing.getUserId() == property.getUserId()
     }
 
-    def "test: get by in-existent propertyTID"() {
+    def "test: get by in-existent propertyId"() {
 
         when:
-        def url = "http://localhost:$port/rest/propertylistings?propertyTID=inExistent"
+        def url = "$rootUrl?propertyId=inExistent"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -111,16 +112,15 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
         result.getResponse().contentAsString == "[]"
     }
 
-    def "test: get by trackingId"() {
+    def "test: get by Id"() {
 
         setup: "listing"
         Property property = createProperty()
-        String listingTrackingID = RandomStringUtils.randomAlphabetic(10)
-        createListing(property, listingTrackingID)
+        String listingId = RandomStringUtils.randomAlphabetic(10)
+        createListing(property, listingId)
 
         when:
-        def url = "http://localhost:$port/rest/propertylistings/${listingTrackingID}"
-        MvcResult result = doGet(mockMvc, url)
+        MvcResult result = doGet(mockMvc, "$rootUrl/${listingId}")
 
         then:
         result.getResponse().getStatus() == HttpStatus.OK.value()
@@ -136,12 +136,12 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
     def "test: property listing - set listed=false"() {
         setup: "listing"
         Property property = createProperty()
-        String listingTrackingID = RandomStringUtils.randomAlphabetic(10)
-        createListing(property, listingTrackingID)
+        String listingId = RandomStringUtils.randomAlphabetic(10)
+        createListing(property, listingId)
 
 
         when: "set published false"
-        def url = "http://localhost:$port/rest/propertylistings/${listingTrackingID}?publish=false"
+        def url = "$rootUrl/${listingId}?publish=false"
         def response = doPost(mockMvc, url).getResponse()
 
         then:
@@ -149,8 +149,7 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
         response.contentAsString == ""
 
         when: "getting listing from db"
-        url = "http://localhost:$port/rest/propertylistings/${listingTrackingID}"
-        def result = doGet(mockMvc, url)
+        def result = doGet(mockMvc, "$rootUrl/${listingId}")
         def dbListing = (PropertyListing) mvcResultToModel(result, PropertyListing.class)
 
         then: "it is listing = false"
@@ -161,12 +160,12 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
 
         setup: "listing"
         Property property = createProperty()
-        String listingTrackingID = RandomStringUtils.randomAlphabetic(10)
-        createListing(property, listingTrackingID)
+        String listingId = RandomStringUtils.randomAlphabetic(10)
+        createListing(property, listingId)
 
 
         when: "set published false"
-        def url = "http://localhost:$port/rest/propertylistings/${listingTrackingID}?publish=true"
+        def url = "$rootUrl/${listingId}?publish=true"
         def response = doPost(mockMvc, url).getResponse()
 
         then:
@@ -174,8 +173,7 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
         response.contentAsString == ""
 
         when: "getting listing from db"
-        url = "http://localhost:$port/rest/propertylistings/${listingTrackingID}"
-        def result = doGet(mockMvc, url)
+        def result = doGet(mockMvc, "$rootUrl/${listingId}")
         def dbListing = (PropertyListing) mvcResultToModel(result, PropertyListing.class)
 
         then: "it is listing = false"
@@ -186,13 +184,13 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
 //--------------------Private Methods-----------------------------
 
     private createProperty() {
-        def userTID = "mockUserID"
+        def userId = "mockUserID"
 
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(userTID)).thenReturn(true)//mock external service call
+        when(userService.userExists(userId)).thenReturn(true)//mock external service call
 
         Property p = TestUtils.generateProperty()
-        p.setUserTID(userTID)
+        p.setUserId(userId)
         p = propertyService.save(p)
 
         return p
@@ -202,14 +200,13 @@ class TestPropertyListingRestController extends IntegrationTestsSetup {
         return createListing(property, null)
     }
 
-    private MockHttpServletResponse createListing(Property property, String listingTrackingId) {
+    private MockHttpServletResponse createListing(Property property, String listingId) {
         PropertyListing listing = TestUtils.generatePropertyListing()
-        listing.setTrackingId(listingTrackingId)
-        listing.setUserTID(property.getUserTID())
-        listing.setPropertyTID(property.getTrackingId())
+        listing.setId(listingId)
+        listing.setUserId(property.getUserId())
+        listing.setPropertyId(property.getId())
 
-        def url = "http://localhost:$port/rest/propertylistings"
-        def response = doPost(mockMvc, url, listing).getResponse()
+        def response = doPost(mockMvc, rootUrl, listing).getResponse()
 
         return response
     }

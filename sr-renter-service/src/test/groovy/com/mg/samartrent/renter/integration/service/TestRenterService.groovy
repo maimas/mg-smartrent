@@ -1,16 +1,13 @@
 package com.mg.samartrent.renter.integration.service
 
-import com.mg.samartrent.renter.TestUtils
+
 import com.mg.samartrent.renter.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Renter
-import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.renter.RenterApplication
-import com.mg.smartrent.renter.service.ExternalUserService
-import com.mg.smartrent.renter.service.RenterService
+import com.mg.smartrent.renter.services.ExternalUserService
+import com.mg.smartrent.renter.services.RenterService
 import org.apache.commons.lang.RandomStringUtils
 import org.mockito.InjectMocks
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -51,7 +48,7 @@ class TestRenterService extends IntegrationTestsSetup {
         def dbRenter = renterService.save(renter)
 
         then: "successfully saved"
-        dbRenter.getTrackingId() != null
+        dbRenter.getId() != null
         dbRenter.getCreatedDate() != null
         dbRenter.getModifiedDate() != null
         dbRenter.getEmail() == renter.getEmail()
@@ -77,28 +74,28 @@ class TestRenterService extends IntegrationTestsSetup {
 
         then:
         dbRenter != null
-        dbRenter.getTrackingId() == renter.getTrackingId()
+        dbRenter.getId() == renter.getId()
         dbRenter.getEmail() == renter.getEmail()
     }
 
 
-    def "test: find renter by trackingId"() {
+    def "test: find renter by Id"() {
         setup:
         Renter renter = generateRenter();
-        renter.setTrackingId(RandomStringUtils.randomAlphabetic(30));
+        renter.setId(RandomStringUtils.randomAlphabetic(30));
 
         when: "not present"
-        def dbRenter = renterService.findByTrackingId(renter.getTrackingId())
+        def dbRenter = renterService.findById(renter.getId())
         then:
         dbRenter == null
 
         when: "present"
         renterService.save(renter)
-        dbRenter = renterService.findByTrackingId(renter.getTrackingId())
+        dbRenter = renterService.findById(renter.getId())
 
         then:
         dbRenter != null
-        dbRenter.getTrackingId() == renter.getTrackingId()
+        dbRenter.getId() == renter.getId()
     }
 
 //    def "test: find renter by email when user exists"() {
@@ -113,7 +110,7 @@ class TestRenterService extends IntegrationTestsSetup {
 //
 //        then:
 //        dbRenter != null
-//        dbRenter.getTrackingId() != null
+//        dbRenter.getId() != null
 //        dbRenter.getFirstName() == user.getFirstName()
 //        dbRenter.getLastName() == user.getLastName()
 //        dbRenter.getDateOfBirth() == user.getDateOfBirth()

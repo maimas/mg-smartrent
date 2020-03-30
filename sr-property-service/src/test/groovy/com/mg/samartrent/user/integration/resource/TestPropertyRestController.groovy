@@ -7,8 +7,8 @@ import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.resource.PropertyRestController
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.ExternalUserService
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,7 +43,7 @@ class TestPropertyRestController extends IntegrationTestsSetup {
 
     static boolean initialized
 
-    static def userTID = "mockUserID"
+    static def userId = "mockUserID"
     static def dbProperty = TestUtils.generateProperty()
 
     /**
@@ -53,7 +53,7 @@ class TestPropertyRestController extends IntegrationTestsSetup {
         if (!initialized) {
             purgeCollection(User.class)
             MockitoAnnotations.initMocks(this)
-            when(userService.userExists(userTID)).thenReturn(true)//mock external service call
+            when(userService.userExists(userId)).thenReturn(true)//mock external service call
 
 
             mockMvc = MockMvcBuilders.standaloneSetup(restController).build()
@@ -63,7 +63,7 @@ class TestPropertyRestController extends IntegrationTestsSetup {
 
     def "test: save property"() {
         setup: "set mocked user id"
-        dbProperty.setUserTID(userTID)
+        dbProperty.setUserId(userId)
 
         when:
         def url = "http://localhost:$port/rest/properties"
@@ -74,10 +74,10 @@ class TestPropertyRestController extends IntegrationTestsSetup {
         response.getContentAsString() == ""
     }
 
-    def "test: get by userTID"() {
+    def "test: get by userId"() {
 
         when:
-        def url = "http://localhost:$port/rest/properties?userTID=${dbProperty.getUserTID()}"
+        def url = "http://localhost:$port/rest/properties?userId=${dbProperty.getUserId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -92,14 +92,14 @@ class TestPropertyRestController extends IntegrationTestsSetup {
         dbProperty = dbProperties.get(0)
 
         then:
-        dbProperty.getTrackingId() != null
-        dbProperty.getUserTID() != null
+        dbProperty.getId() != null
+        dbProperty.getUserId() != null
     }
 
-    def "test: get by in-existent userTID"() {
+    def "test: get by in-existent userId"() {
 
         when:
-        def url = "http://localhost:$port/rest/properties?userTID=inExistent"
+        def url = "http://localhost:$port/rest/properties?userId=inExistent"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -107,9 +107,9 @@ class TestPropertyRestController extends IntegrationTestsSetup {
         result.getResponse().contentAsString == "[]"
     }
 
-    def "test: get property by trackingId"() {
+    def "test: get property by Id"() {
         when:
-        def url = "http://localhost:$port/rest/properties?trackingId=${dbProperty.getTrackingId()}"
+        def url = "http://localhost:$port/rest/properties?id=${dbProperty.getId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -118,13 +118,13 @@ class TestPropertyRestController extends IntegrationTestsSetup {
         when:
         def user = (Property) mvcResultToModel(result, Property.class)
         then:
-        user.getTrackingId() == dbProperty.getTrackingId()
+        user.getId() == dbProperty.getId()
     }
 
-    def "test: get by trackingId for in-existent property"() {
+    def "test: get by Id for in-existent property"() {
 
         when:
-        def url = "http://localhost:$port/rest/properties?trackingId=testInvId"
+        def url = "http://localhost:$port/rest/properties?id=testInvId"
         MvcResult result = doGet(mockMvc, url)
 
         then:

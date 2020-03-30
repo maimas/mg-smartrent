@@ -1,8 +1,9 @@
-package com.mg.smartrent.renter.service;
+package com.mg.smartrent.renter.services;
 
 
 import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.enrichment.ModelEnricher;
+import com.mg.smartrent.domain.models.Renter;
 import com.mg.smartrent.domain.models.RenterView;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import org.apache.logging.log4j.LogManager;
@@ -34,19 +35,19 @@ public class RenterViewsService {
         enrich(model);
         validate(model);
         RenterView view = queryService.save(model);
-        log.info("Renter view created. TrackingId = " + view.getTrackingId());
+        log.info("Renter view created. Id = {}", view.getId());
         return view;
     }
 
-    public long count(@NotNull String renterTID) {
-        Query query = new Query(Criteria.where("renterTID").is(renterTID));
+    public long count(@NotNull String renterId) {
+        Query query = new Query(Criteria.where(RenterView.Fields.renterId).is(renterId));
         return queryService.count(query, RenterView.class);
     }
 
     private void enrich(RenterView view) {
         ModelEnricher.enrich(view);
-        if (view.getUserTID() == null) {
-            view.setUserTID("unknown");
+        if (view.getUserId() == null) {
+            view.setUserId("unknown");
         }
     }
 

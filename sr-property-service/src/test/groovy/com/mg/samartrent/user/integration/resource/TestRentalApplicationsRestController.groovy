@@ -3,15 +3,14 @@ package com.mg.samartrent.user.integration.resource
 import com.fasterxml.jackson.core.type.TypeReference
 import com.mg.samartrent.user.TestUtils
 import com.mg.samartrent.user.integration.IntegrationTestsSetup
-import com.mg.smartrent.domain.enums.EnRentalApplicationStatus
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.models.User
 import com.mg.smartrent.property.PropertyApplication
 import com.mg.smartrent.property.resource.RentalApplicationRestController
-import com.mg.smartrent.property.service.ExternalUserService
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.RentalApplicationService
+import com.mg.smartrent.property.services.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.RentalApplicationService
 import org.apache.commons.lang.RandomStringUtils
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
@@ -50,14 +49,14 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
     private RentalApplicationService rentalApplicationService
 
     static boolean initialized
-    static String endpointURL;
+    static String rootUrl;
 
     /**
      * Spring beans cannot be initialized in setupSpec : https://github.com/spockframework/spock/issues/76
      */
     def setup() {
         if (!initialized) {
-            endpointURL = "http://localhost:$port/rest/rentalapplications"
+            rootUrl = "http://localhost:$port/rest/rentalapplications"
             purgeCollection(User.class)
             purgeCollection(Property.class)
             purgeCollection(RentalApplication.class)
@@ -79,13 +78,13 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         response.getContentAsString() == ""
     }
 
-    def "test: get by propertyTID"() {
+    def "test: get by propertyId"() {
         setup:
         Property property = createProperty()
         createRentalApplication(property)
 
         when:
-        def url = "$endpointURL?propertyTID=${property.getTrackingId()}"
+        def url = "$rootUrl?propertyId=${property.getId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -101,19 +100,19 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         def dbRentalApplication = listOfApplications.get(0)
 
         then:
-        dbRentalApplication.getTrackingId() != null
-        dbRentalApplication.getPropertyTID() == property.getTrackingId()
-        dbRentalApplication.getRenterUserTID() == property.getUserTID()
+        dbRentalApplication.getId() != null
+        dbRentalApplication.getPropertyId() == property.getId()
+        dbRentalApplication.getRenterUserId() == property.getUserId()
     }
 
-    def "test: get by renterUserTID"() {
+    def "test: get by renterUserId"() {
         setup:
         purgeCollection(RentalApplication.class)
         Property property = createProperty()
         createRentalApplication(property)
 
         when:
-        def url = "$endpointURL?renterUserTID=${property.getUserTID()}"
+        def url = "$rootUrl?renterUserId=${property.getUserId()}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -129,16 +128,16 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         def application = listOfApplications.get(0)
 
         then:
-        application.getTrackingId() != null
-        application.getPropertyTID() == property.getTrackingId()
-        application.getRenterUserTID() == property.getUserTID()
+        application.getId() != null
+        application.getPropertyId() == property.getId()
+        application.getRenterUserId() == property.getUserId()
     }
 
 
-    def "test: get by in-existent propertyTID"() {
+    def "test: get by in-existent propertyId"() {
 
         when:
-        def url = "$endpointURL?propertyTID=inExistent"
+        def url = "$rootUrl?propertyId=inExistent"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -146,15 +145,15 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         result.getResponse().contentAsString == "[]"
     }
 
-    def "test: get by trackingId"() {
+    def "test: get by id"() {
 
         setup: "model"
         Property property = createProperty()
-        String rentApplicTrackingID = RandomStringUtils.randomAlphabetic(10)
-        createRentalApplication(property, rentApplicTrackingID)
+        String rentApplicationID = RandomStringUtils.randomAlphabetic(10)
+        createRentalApplication(property, rentApplicationID)
 
         when:
-        def url = "$endpointURL/${rentApplicTrackingID}"
+        def url = "$rootUrl/${rentApplicationID}"
         MvcResult result = doGet(mockMvc, url)
 
         then:
@@ -171,13 +170,13 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
 //--------------------Private Methods-----------------------------
 
     private createProperty() {
-        def userTID = "mockUserID"
+        def userId = "mockUserID"
 
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(userTID)).thenReturn(true)//mock external service call
+        when(userService.userExists(userId)).thenReturn(true)//mock external service call
 
         Property p = TestUtils.generateProperty()
-        p.setUserTID(userTID)
+        p.setUserId(userId)
         p = propertyService.save(p)
 
         return p
@@ -187,14 +186,14 @@ class TestRentalApplicationsRestController extends IntegrationTestsSetup {
         return createRentalApplication(property, null)
     }
 
-    private MockHttpServletResponse createRentalApplication(Property property, String rentalApplTrackingId) {
+    private MockHttpServletResponse createRentalApplication(Property property, String rentalApplicationId) {
         RentalApplication rentalApplication = TestUtils.generateRentalApplication()
-        rentalApplication.setTrackingId(rentalApplTrackingId)
-        rentalApplication.setStatus(PendingOwnerReview.name())
-        rentalApplication.setPropertyTID(property.getTrackingId())
-        rentalApplication.setRenterUserTID(property.getUserTID())
+        rentalApplication.setId(rentalApplicationId)
+        rentalApplication.setStatus(PendingOwnerReview)
+        rentalApplication.setPropertyId(property.getId())
+        rentalApplication.setRenterUserId(property.getUserId())
 
-        def response = doPost(mockMvc, endpointURL, rentalApplication).getResponse()
+        def response = doPost(mockMvc, rootUrl, rentalApplication).getResponse()
 
         return response
     }

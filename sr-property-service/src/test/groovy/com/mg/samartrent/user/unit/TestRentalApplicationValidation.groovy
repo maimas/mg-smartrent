@@ -6,9 +6,9 @@ import com.mg.smartrent.domain.enums.EnRentalApplicationStatus
 import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.validation.ModelValidationException
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.service.ExternalUserService
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.RentalApplicationService
+import com.mg.smartrent.property.services.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.RentalApplicationService
 import org.junit.Assert
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -53,8 +53,8 @@ class TestRentalApplicationValidation extends Specification {
 
         setup: "mock db call and user exists call"
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(model.getRenterUserTID())).thenReturn(true)//mock external service call
-        when(propertyService.findByTrackingId(model.getPropertyTID())).thenReturn(generateProperty())//mock property as it already exists
+        when(userService.userExists(model.getRenterUserId())).thenReturn(true)//mock external service call
+        when(propertyService.findById(model.getPropertyId())).thenReturn(generateProperty())//mock property as it already exists
         when(queryService.save(model)).thenReturn(model)//mock db call
 
         when: "saving listing with a new test value"
@@ -76,34 +76,33 @@ class TestRentalApplicationValidation extends Specification {
             Assert.assertEquals(errorMsg, e.getMessage().trim())
         }
         where:
-        model                       | field           | value                                  | expectException | errorMsg
-        generateRentalApplication() | 'renterUserTID' | null                                   | true            | "Rental Application could not be saved. User not found, UserTID = null"
-        generateRentalApplication() | 'renterUserTID' | ""                                     | true            | "Rental Application could not be saved. User not found, UserTID ="
-        generateRentalApplication() | 'renterUserTID' | "inValidUserID"                        | true            | "Rental Application could not be saved. User not found, UserTID = inValidUserID"
-        generateRentalApplication() | 'renterUserTID' | "mockedUserId"                         | false           | null
+        model                       | field          | value                                  | expectException | errorMsg
+        generateRentalApplication() | 'renterUserId' | null                                   | true            | "Rental Application could not be saved. User not found, UserId = null"
+        generateRentalApplication() | 'renterUserId' | ""                                     | true            | "Rental Application could not be saved. User not found, UserId ="
+        generateRentalApplication() | 'renterUserId' | "inValidUserID"                        | true            | "Rental Application could not be saved. User not found, UserId = inValidUserID"
+        generateRentalApplication() | 'renterUserId' | "mockedUserId"                         | false           | null
 
-        generateRentalApplication() | 'propertyTID'   | null                                   | true            | "Rental Application could not be saved. Property not found, TrackingId = null"
-        generateRentalApplication() | 'propertyTID'   | ""                                     | true            | "Rental Application could not be saved. Property not found, TrackingId ="
-        generateRentalApplication() | 'propertyTID'   | "inValidPropertyID"                    | true            | "Rental Application could not be saved. Property not found, TrackingId = inValidPropertyID"
-        generateRentalApplication() | 'propertyTID'   | "mockedPropertyId"                     | false           | null
+        generateRentalApplication() | 'propertyId'   | null                                   | true            | "Rental Application could not be saved. Property not found, Id = null"
+        generateRentalApplication() | 'propertyId'   | ""                                     | true            | "Rental Application could not be saved. Property not found, Id ="
+        generateRentalApplication() | 'propertyId'   | "inValidPropertyID"                    | true            | "Rental Application could not be saved. Property not found, Id = inValidPropertyID"
+        generateRentalApplication() | 'propertyId'   | "mockedPropertyId"                     | false           | null
 
-        generateRentalApplication() | 'price'         | -1                                     | true            | "Field [price], value [-1], reason [must be greater than 0]"
-        generateRentalApplication() | 'price'         | 0                                      | true            | "Field [price], value [0], reason [must be greater than 0]"
-        generateRentalApplication() | 'price'         | 1                                      | false           | null
+        generateRentalApplication() | 'price'        | -1                                     | true            | 'Field "price" has an invalid value value "-1". [must be greater than 0]'
+        generateRentalApplication() | 'price'        | 0                                      | true            | 'Field "price" has an invalid value value "0". [must be greater than 0]'
+        generateRentalApplication() | 'price'        | 1                                      | false           | null
 
-        generateRentalApplication() | 'currency'      | EnCurrency.USD.name()                  | false           | null
-        generateRentalApplication() | 'currency'      | EnCurrency.EUR.name()                  | false           | null
-        generateRentalApplication() | 'currency'      | 'invalid'                              | true            | "Field [currency], value [invalid], reason [must be any of enum class com.mg.smartrent.domain.enums.EnCurrency]"
-        generateRentalApplication() | 'currency'      | ''                                     | true            | "Field [currency], value [], reason [must be any of enum class com.mg.smartrent.domain.enums.EnCurrency]"
-        generateRentalApplication() | 'currency'      | null                                   | true            | "Field [currency], value [null], reason [must not be null]"
+        generateRentalApplication() | 'currency'     | EnCurrency.USD                         | false           | null
+        generateRentalApplication() | 'currency'     | EnCurrency.EUR                         | false           | null
+        generateRentalApplication() | 'currency'     | ''                                     | true            | 'Field "currency" has an invalid value value "null". [must not be null]'
+        generateRentalApplication() | 'currency'     | null                                   | true            | 'Field "currency" has an invalid value value "null". [must not be null]'
 
-        generateRentalApplication() | "checkInDate"   | new Date(currentTimeMillis())          | false           | null
-        generateRentalApplication() | "checkInDate"   | new Date(currentTimeMillis() - 100000) | false           | null
-        generateRentalApplication() | "checkInDate"   | new Date(currentTimeMillis() + 100000) | false           | null
+        generateRentalApplication() | "checkInDate"  | new Date(currentTimeMillis())          | false           | null
+        generateRentalApplication() | "checkInDate"  | new Date(currentTimeMillis() - 100000) | false           | null
+        generateRentalApplication() | "checkInDate"  | new Date(currentTimeMillis() + 100000) | false           | null
 
-        generateRentalApplication() | "checkOutDate"  | new Date(currentTimeMillis())          | false           | null
-        generateRentalApplication() | "checkOutDate"  | new Date(currentTimeMillis() - 100000) | false           | null
-        generateRentalApplication() | "checkOutDate"  | new Date(currentTimeMillis() + 100000) | false           | null
+        generateRentalApplication() | "checkOutDate" | new Date(currentTimeMillis())          | false           | null
+        generateRentalApplication() | "checkOutDate" | new Date(currentTimeMillis() - 100000) | false           | null
+        generateRentalApplication() | "checkOutDate" | new Date(currentTimeMillis() + 100000) | false           | null
     }
 
 
@@ -113,8 +112,8 @@ class TestRentalApplicationValidation extends Specification {
         RentalApplication application = generateRentalApplication();
 
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(application.getRenterUserTID())).thenReturn(true)//mock external service call
-        when(propertyService.findByTrackingId(application.getPropertyTID())).thenReturn(generateProperty())//mock property as it already exists
+        when(userService.userExists(application.getRenterUserId())).thenReturn(true)//mock external service call
+        when(propertyService.findById(application.getPropertyId())).thenReturn(generateProperty())//mock property as it already exists
         when(queryService.save(application)).thenReturn(application)//mock db call
 
         when: "saving new application with no status"
@@ -122,39 +121,32 @@ class TestRentalApplicationValidation extends Specification {
         def dbModel = rentalApplicationService.save(application)
 
         then: 'default value is set'
-        dbModel.getStatus() == EnRentalApplicationStatus.PendingOwnerReview.name()
+        dbModel.getStatus() == EnRentalApplicationStatus.PendingOwnerReview
 
 
         when: "updating application status"
-        dbModel.setStatus(EnRentalApplicationStatus.Accepted.name())
+        dbModel.setStatus(EnRentalApplicationStatus.Accepted)
         dbModel = rentalApplicationService.save(application)
 
         then: 'new status is set'
-        dbModel.getStatus() == EnRentalApplicationStatus.Accepted.name()
+        dbModel.getStatus() == EnRentalApplicationStatus.Accepted
 
 
         when: "updating application status"
-        dbModel.setStatus(EnRentalApplicationStatus.Rejected.name())
+        dbModel.setStatus(EnRentalApplicationStatus.Rejected)
         dbModel = rentalApplicationService.save(application)
 
         then: 'new status is set'
-        dbModel.getStatus() == EnRentalApplicationStatus.Rejected.name()
+        dbModel.getStatus() == EnRentalApplicationStatus.Rejected
 
 
         when: "updating application status"
-        dbModel.setStatus(EnRentalApplicationStatus.PendingRenterReview.name())
+        dbModel.setStatus(EnRentalApplicationStatus.PendingRenterReview)
         dbModel = rentalApplicationService.save(application)
 
         then: 'new status is set'
-        dbModel.getStatus() == EnRentalApplicationStatus.PendingRenterReview.name()
+        dbModel.getStatus() == EnRentalApplicationStatus.PendingRenterReview
 
-
-        when: "updating application status with and invalid status"
-        dbModel.setStatus('invalid')
-        rentalApplicationService.save(application)
-
-        then: 'exception is thrown'
-        thrown(ModelValidationException)
 
         when: "updating application status with and invalid status"
         dbModel.setStatus(null)

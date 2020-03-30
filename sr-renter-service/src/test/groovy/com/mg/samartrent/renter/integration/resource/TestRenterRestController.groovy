@@ -1,17 +1,14 @@
 package com.mg.samartrent.renter.integration.resource
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.mg.samartrent.renter.TestUtils
+import com.jayway.jsonpath.JsonPath
 import com.mg.samartrent.renter.integration.IntegrationTestsSetup
-import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.Renter
 import com.mg.smartrent.domain.models.RenterReview
+import com.mg.smartrent.domain.models.RenterView
 import com.mg.smartrent.renter.RenterApplication
 import com.mg.smartrent.renter.resource.RenterRestController
-import com.mg.smartrent.renter.service.ExternalUserService
-import com.mg.smartrent.renter.service.RenterReviewService
-import com.mg.smartrent.renter.service.RenterService
-import org.apache.commons.lang.RandomStringUtils
+import com.mg.smartrent.renter.services.ExternalUserService
 import org.mockito.InjectMocks
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -25,8 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import spock.lang.Stepwise
 
 import static com.mg.samartrent.renter.TestUtils.*
-import static com.mg.samartrent.renter.TestUtils.generateRenter
-import static org.apache.commons.lang.RandomStringUtils.*
+import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic
 
 
 @SpringBootTest(
@@ -47,9 +43,8 @@ class TestRenterRestController extends IntegrationTestsSetup {
     @InjectMocks
     private RenterRestController restController
 
-
     static boolean initialized
-
+    static String restUrl
 
     /**
      * Spring beans cannot be initialized in setupSpec : https://github.com/spockframework/spock/issues/76
@@ -59,6 +54,7 @@ class TestRenterRestController extends IntegrationTestsSetup {
             purgeCollection(Renter.class)
             purgeCollection(RenterReview.class)
             mockMvc = MockMvcBuilders.standaloneSetup(restController).build()
+            restUrl = "http://localhost:$port/rest/renters"
             initialized = true
         }
     }
@@ -67,43 +63,35 @@ class TestRenterRestController extends IntegrationTestsSetup {
         setup:
         def renter = generateRenter()
         when:
-        def url = "http://localhost:$port/rest/renters"
-        def response = doPost(mockMvc, url, renter).getResponse()
+        def response = doPost(mockMvc, restUrl, renter).getResponse()
 
         then:
         response.status == HttpStatus.OK.value()
-        response.getContentAsString() == ""
+        JsonPath.parse(response.getContentAsString()).read('$.id') != null
+        JsonPath.parse(response.getContentAsString()).read('$.length()') == 1
+
     }
 
     def "test: get by email"() {
         when: "create renter"
         def renter = generateRenter()
-        def url = "http://localhost:$port/rest/renters"
-        def response = doPost(mockMvc, url, renter).getResponse()
+        def response = doPost(mockMvc, restUrl, renter).getResponse()
         then:
         response.status == HttpStatus.OK.value()
 
-
         when: "searching by email"
-        url = "http://localhost:$port/rest/renters?email=${renter.getEmail()}"
-        MvcResult result = doGet(mockMvc, url)
+        MvcResult result = doGet(mockMvc, "$restUrl?email=${renter.getEmail()}")
 
         then:
-        result.getResponse().getStatus() == HttpStatus.OK.value()
+        response.status == HttpStatus.OK.value()
+        JsonPath.parse(result.response.getContentAsString()).read('$.id') != null
+        JsonPath.parse(result.response.getContentAsString()).read('$.email') == renter.email
 
-        when:
-        def dbRenter = (Renter) mvcResultToModel(result, Renter.class)
-
-        then:
-        dbRenter != null
-        dbRenter.getTrackingId() != null
-        dbRenter.getEmail() == renter.getEmail()
     }
 
     def "test: get by in-existent email"() {
         when:
-        def url = "http://localhost:$port/rest/renters?email=inExistent@email.com"
-        MvcResult result = doGet(mockMvc, url)
+        MvcResult result = doGet(mockMvc, "$restUrl?email=inExistent@email.com")
 
         then:
         result.getResponse().getStatus() == HttpStatus.OK.value()
@@ -113,25 +101,22 @@ class TestRenterRestController extends IntegrationTestsSetup {
     def "test: save renter Review"() {
         setup: "create renter"
         def renter = generateRenter()
-        renter.setTrackingId(randomAlphabetic(20))
-        def url = "http://localhost:$port/rest/renters"
-        doPost(mockMvc, url, renter).getResponse()
+        renter.setId(randomAlphabetic(20))
+        doPost(mockMvc, restUrl, renter).getResponse()
 
         when: "-------add review to renter------------"
         def review = generateRenterReview();
-        review.setRenterTID(renter.trackingId)
+        review.setRenterId(renter.id)
         mockServicesFor(review)
-        url = "http://localhost:$port/rest/renters/${renter.trackingId}/reviews"
-        def response = doPost(mockMvc, url, review).getResponse()
+        def response = doPost(mockMvc, "$restUrl/${renter.id}/reviews", review).getResponse()
 
         then: "-------review created----------"
         response.status == HttpStatus.OK.value()
-        response.getContentAsString() == ""
+        JsonPath.parse(response.getContentAsString()).read('$.id') != null
 
 
         when: "searching for renter reviews"
-        url = "http://localhost:$port/rest/renters/${renter.trackingId}/reviews"
-        MvcResult result = doGet(mockMvc, url)
+        MvcResult result = doGet(mockMvc, "$restUrl/${renter.id}/reviews")
 
         then:
         result.getResponse().getStatus() == HttpStatus.OK.value()
@@ -147,26 +132,25 @@ class TestRenterRestController extends IntegrationTestsSetup {
     def "test: save renter View"() {
         setup:
         def view = generateRenterView();
-        def url = "http://localhost:$port/rest/renters/${view.renterTID}/views"
 
         when: "save view"
-        def response = doPost(mockMvc, url, view).getResponse()
+        def response = doPost(mockMvc, "$restUrl/${view.renterId}/views", view).getResponse()
         then: "success"
         response.status == HttpStatus.OK.value()
-        response.getContentAsString() == ""
+        JsonPath.parse(response.getContentAsString()).read('$.id') != null
 
         when: "count renter views"
-        MvcResult result = doGet(mockMvc, url)
+        MvcResult result = doGet(mockMvc, "$restUrl/${view.renterId}/views/count")
         then: "total views = 1"
         result.getResponse().getStatus() == HttpStatus.OK.value()
-        mvcResultToModel(result, Long.class) == 1
+        result.getResponse().contentAsString == "1"
 
     }
 
 
     private mockServicesFor(RenterReview review) {
         MockitoAnnotations.initMocks(this)
-        Mockito.when(userService.userExists(review.getUserTID())).thenReturn(true)
+        Mockito.when(userService.userExists(review.getUserId())).thenReturn(true)
     }
 
 

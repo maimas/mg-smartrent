@@ -5,9 +5,9 @@ import com.mg.samartrent.renter.integration.IntegrationTestsSetup
 import com.mg.smartrent.domain.models.Renter
 import com.mg.smartrent.domain.models.RenterReview
 import com.mg.smartrent.renter.RenterApplication
-import com.mg.smartrent.renter.service.ExternalUserService
-import com.mg.smartrent.renter.service.RenterReviewService
-import com.mg.smartrent.renter.service.RenterService
+import com.mg.smartrent.renter.services.ExternalUserService
+import com.mg.smartrent.renter.services.RenterReviewService
+import com.mg.smartrent.renter.services.RenterService
 import org.mockito.InjectMocks
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -52,23 +52,23 @@ class TestRenterReviewService extends IntegrationTestsSetup {
         def dbReview = renterReviewService.save(review)
 
         then: "successfully saved"
-        dbReview.getTrackingId() != null
+        dbReview.getId() != null
         dbReview.getCreatedDate() != null
         dbReview.getModifiedDate() != null
-        dbReview.getUserTID() == review.getUserTID()
-        dbReview.getRenterTID() == review.getRenterTID()
+        dbReview.getUserId() == review.getUserId()
+        dbReview.getRenterId() == review.getRenterId()
         dbReview.getRating() == review.getRating()
         dbReview.getReview() == review.getReview()
     }
 
-    def "test: find all by renter TID"() {
+    def "test: find all by renter Id"() {
         setup:
         RenterReview review = generateRenterReview()
         mockServicesFor(review)
         renterReviewService.save(review)
 
         when:
-        List<RenterReview> reviews = renterReviewService.findByRenterTID(review.getRenterTID())
+        List<RenterReview> reviews = renterReviewService.findByRenterId(review.getRenterId())
 
         then:
         reviews != null
@@ -76,39 +76,39 @@ class TestRenterReviewService extends IntegrationTestsSetup {
     }
 
 
-    def "test: save review with in-existent userTID"() {
+    def "test: save review with in-existent userId"() {
         setup:
         RenterReview review = generateRenterReview()
         MockitoAnnotations.initMocks(this)
-        Mockito.when(renterService.findByTrackingId(review.getRenterTID())).thenReturn(new Renter())
+        Mockito.when(renterService.findById(review.getRenterId())).thenReturn(new Renter())
 
         when: "saving"
         renterReviewService.save(review)
 
         then: "exception is thrown"
         RuntimeException e = thrown()
-        e.getMessage() == "Renter Review could not be saved. User with TID ${review.userTID} not found."
+        e.getMessage() == "Renter Review could not be saved. User with Id ${review.userId} not found."
     }
 
-    def "test: save review with in-existent renterTID"() {
+    def "test: save review with in-existent renterId"() {
         setup:
         RenterReview review = generateRenterReview()
         MockitoAnnotations.initMocks(this)
-        Mockito.when(userService.userExists(review.getUserTID())).thenReturn(true)
+        Mockito.when(userService.userExists(review.getUserId())).thenReturn(true)
 
         when: "saving"
         renterReviewService.save(review)
 
         then: "exception is thrown"
         RuntimeException e = thrown()
-        e.getMessage() == "Renter Review could not be saved. Renter with TID ${review.userTID} not found."
+        e.getMessage() == "Renter Review could not be saved. Renter with Id ${review.renterId} not found."
     }
 
 
     private mockServicesFor(RenterReview review) {
         MockitoAnnotations.initMocks(this)
-        Mockito.when(userService.userExists(review.getUserTID())).thenReturn(true)
-        Mockito.when(renterService.findByTrackingId(review.getRenterTID())).thenReturn(new Renter())
+        Mockito.when(userService.userExists(review.getUserId())).thenReturn(true)
+        Mockito.when(renterService.findById(review.getRenterId())).thenReturn(new Renter())
     }
 
 }

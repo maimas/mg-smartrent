@@ -4,6 +4,7 @@ import com.mg.smartrent.domain.enums.EnBuildingType
 import com.mg.smartrent.domain.enums.EnCurrency
 import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.enums.EnRentalApplicationStatus
+import com.mg.smartrent.domain.enums.EnUserStatus
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.models.RentalApplication
@@ -15,7 +16,7 @@ class TestUtils {
 
         Property property = new Property()
 
-        property.setUserTID("userId1234")
+        property.setUserId("userId1234")
         property.setBuildingType(EnBuildingType.Condo.name())
         property.setCondition(EnPropertyCondition.Normal.name())
         property.setTotalRooms(10)
@@ -29,8 +30,8 @@ class TestUtils {
 
     static PropertyListing generatePropertyListing() {
         PropertyListing listing = new PropertyListing()
-        listing.setUserTID("mockedUserId")
-        listing.setPropertyTID("mockedPropertyId")
+        listing.setUserId("mockedUserId")
+        listing.setPropertyId("mockedPropertyId")
         listing.setListed(true)
         listing.setPrice(100)
         listing.setTotalViews(3)
@@ -47,7 +48,7 @@ class TestUtils {
         user.setEmail("test.user@domain.com")
         user.setPassword("12341234")
         user.setEnabled(true)
-        user.setStatus("for new user is set by service")
+        user.setStatus(EnUserStatus.Pending)
 
         return user
     }
@@ -55,12 +56,12 @@ class TestUtils {
     static RentalApplication generateRentalApplication() {
 
         RentalApplication model = new RentalApplication()
-        model.setRenterUserTID("mockedUserId")
-        model.setPropertyTID("mockedPropertyId")
+        model.setRenterUserId("mockedUserId")
+        model.setPropertyId("mockedPropertyId")
         model.setCheckInDate(new Date(System.currentTimeMillis() - 1000000000))
         model.setCheckOutDate(new Date(System.currentTimeMillis() + 1000000000))
         model.setPrice(100)
-        model.setCurrency(EnCurrency.USD.name())
+        model.setCurrency(EnCurrency.USD)
         return model
     }
 

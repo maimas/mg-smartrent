@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 
 @Configuration
-public class BeanConfiguration {
+public class BeanConfig {
 
 //
 //    @Bean

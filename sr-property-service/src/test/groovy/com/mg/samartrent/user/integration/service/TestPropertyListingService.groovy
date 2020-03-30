@@ -6,9 +6,9 @@ import com.mg.smartrent.domain.models.PropertyListing
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException
 import com.mg.smartrent.domain.validation.ModelValidationException
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.service.PropertyListingService
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.ExternalUserService
+import com.mg.smartrent.property.services.PropertyListingService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.ExternalUserService
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,7 +49,7 @@ class TestPropertyListingService extends IntegrationTestsSetup {
             purgeCollection(PropertyListing.class)
 
             MockitoAnnotations.initMocks(this)
-            when(userService.userExists(dbProperty.getUserTID())).thenReturn(true)//mock external service call
+            when(userService.userExists(dbProperty.getUserId())).thenReturn(true)//mock external service call
 
             dbProperty = propertyService.save(dbProperty)
             testsSetupExecuted = true
@@ -79,22 +79,22 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     def "test: save listing for in-existent User"() {
         setup: "mocking user"
         def listing = generatePropertyListing()
-        listing.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(listing.getUserTID())).thenReturn(false)//mock external service call to user not found
+        listing.setPropertyId(dbProperty.getId())
+        when(userService.userExists(listing.getUserId())).thenReturn(false)//mock external service call to user not found
 
         when: "saving listing"
         listingService.save(listing)
 
         then: "exception is thrown"
         ModelBusinessValidationException e = thrown()
-        e.getMessage() == "Listing could not be saved. User not found, UserTID = ${listing.userTID}"
+        e.getMessage() == "Listing could not be saved. User not found, User Id = ${listing.userId}"
     }
 
     def "test: save listing with same checkin/checkout date"() {
         setup: "mock user exists"
         def listing = generatePropertyListing()
-        listing.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+        listing.setPropertyId(dbProperty.getId())
+        when(userService.userExists(listing.getUserId())).thenReturn(true)//mock external service call
 
         when: "saving with past dates"
         def date = new Date(System.currentTimeMillis())
@@ -109,8 +109,8 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     def "test: save listing for with checkin after checkout date"() {
         setup:
         def listing = generatePropertyListing()
-        listing.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+        listing.setPropertyId(dbProperty.getId())
+        when(userService.userExists(listing.getUserId())).thenReturn(true)//mock external service call
 
         when: "checkin after checkout"
         listing.setCheckInDate(new Date(System.currentTimeMillis() + 100000))
@@ -125,50 +125,50 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     def "test: save listing for existent User and Property"() {
         setup:
         def listing = generatePropertyListing()
-        listing.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+        listing.setPropertyId(dbProperty.getId())
+        when(userService.userExists(listing.getUserId())).thenReturn(true)//mock external service call
 
         when: "saving listing"
         listing = listingService.save(listing)
 
         then: "successfully saved"
-        listing.getTrackingId() != null
+        listing.getId() != null
         listing.getCreatedDate() != null
         listing.getModifiedDate() != null
-        listing.getUserTID() == "mockedUserId"
-        listing.getPropertyTID() == dbProperty.trackingId
+        listing.getUserId() == "mockedUserId"
+        listing.getPropertyId() == dbProperty.id
         listing.getPrice() == 100
         listing.getTotalViews() == 3
         listing.getCheckInDate().before(new Date())
         listing.getCheckOutDate().after(new Date())
     }
 
-    def "test: findByTracking then findByPropertyTID then findByUserTID"() {
+    def "test: findById then findByPropertyId then findByUserId"() {
         setup:
         def property = generateProperty()
-        when(userService.userExists(property.getUserTID())).thenReturn(true)//mock external service call
+        when(userService.userExists(property.getUserId())).thenReturn(true)//mock external service call
 
         def listing = generatePropertyListing()
-        listing.setPropertyTID(propertyService.save(property).getTrackingId())
-        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+        listing.setPropertyId(propertyService.save(property).getId())
+        when(userService.userExists(listing.getUserId())).thenReturn(true)//mock external service call
 
         listing = listingService.save(listing)
 
         when:
-        def dbListing = listingService.findByTrackingId(listing.getTrackingId())
+        def dbListing = listingService.findById(listing.getId())
 
         then: 'found'
         dbListing != null
 
 
         when:
-        def listings = listingService.findByPropertyTID(listing.getPropertyTID())
+        def listings = listingService.findByPropertyId(listing.getPropertyId())
 
         then: 'only one instance found'
         listings.size() == 1
 
         when:
-        listings = listingService.findByPropertyTID(listing.getPropertyTID())
+        listings = listingService.findByPropertyId(listing.getPropertyId())
 
         then: 'only one instance found'
         listings.size() == 1
@@ -177,23 +177,23 @@ class TestPropertyListingService extends IntegrationTestsSetup {
     def "test: publish listing"() {
         setup:
         def property = generateProperty()
-        when(userService.userExists(property.getUserTID())).thenReturn(true)//mock external service call
+        when(userService.userExists(property.getUserId())).thenReturn(true)//mock external service call
 
         def listing = generatePropertyListing()
-        listing.setPropertyTID(propertyService.save(property).getTrackingId())
-        when(userService.userExists(listing.getUserTID())).thenReturn(true)//mock external service call
+        listing.setPropertyId(propertyService.save(property).getId())
+        when(userService.userExists(listing.getUserId())).thenReturn(true)//mock external service call
 
         listing = listingService.save(listing)
 
         when:
-        def dbListing = listingService.publish(listing.getTrackingId(), true)
+        def dbListing = listingService.publish(listing.getId(), true)
 
         then:
         dbListing.isListed()
 
 
         when:
-        dbListing = listingService.publish(listing.getTrackingId(), false)
+        dbListing = listingService.publish(listing.getId(), false)
 
         then:
         !dbListing.isListed()

@@ -1,9 +1,10 @@
-package com.mg.smartrent.property.service;
+package com.mg.smartrent.property.services;
 
 
 import com.mg.persistence.service.QueryService;
 import com.mg.smartrent.domain.enrichment.ModelEnricher;
 import com.mg.smartrent.domain.enums.EnRentalApplicationStatus;
+import com.mg.smartrent.domain.models.BizItem;
 import com.mg.smartrent.domain.models.RentalApplication;
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
@@ -38,29 +39,29 @@ public class RentalApplicationService {
 
 
     public RentalApplication save(@NotNull RentalApplication model) throws ModelValidationException {
-        Validation.validate(userService.userExists(model.getRenterUserTID()), new ModelBusinessValidationException(String.format("Rental Application could not be saved. User not found, UserTID = %s", model.getRenterUserTID())));
-        Validation.validate(propertyService.findByTrackingId(model.getPropertyTID()) != null, new ModelBusinessValidationException(String.format("Rental Application could not be saved. Property not found, TrackingId = %s", model.getPropertyTID())));
+        Validation.validate(userService.userExists(model.getRenterUserId()), new ModelBusinessValidationException(String.format("Rental Application could not be saved. User not found, UserId = %s", model.getRenterUserId())));
+        Validation.validate(propertyService.findById(model.getPropertyId()) != null, new ModelBusinessValidationException(String.format("Rental Application could not be saved. Property not found, Id = %s", model.getPropertyId())));
 
         enrich(model);
         validate(model);
         RentalApplication dbModel = queryService.save(model);
-        log.info(String.format("Rental Request created, %s. From user %s to property %s", dbModel.getTrackingId(), dbModel.getRenterUserTID(), dbModel.getPropertyTID()));
+        log.debug("Rental Request created: {}", dbModel);
 
         return dbModel;
     }
 
 
-    public RentalApplication findByTrackingId(@NotNull @NotBlank String trackingId) {
-        List<RentalApplication> propertyList = queryService.findAllBy("trackingId", trackingId, RentalApplication.class);
+    public RentalApplication findById(@NotNull @NotBlank String id) {
+        List<RentalApplication> propertyList = queryService.findAllBy(BizItem.Fields.id, id, RentalApplication.class);
         return (propertyList == null || propertyList.isEmpty()) ? null : propertyList.get(0);
     }
 
-    public List<RentalApplication> findByRenterUserTID(@NotNull @NotBlank String renterUserTID) {
-        return queryService.findAllBy("renterUserTID", renterUserTID, RentalApplication.class);
+    public List<RentalApplication> findByRenterUserId(@NotNull @NotBlank String renterUserId) {
+        return queryService.findAllBy(RentalApplication.Fields.renterUserId, renterUserId, RentalApplication.class);
     }
 
-    public List<RentalApplication> findByPropertyTID(@NotNull @NotBlank String propertyTID) {
-        return queryService.findAllBy("propertyTID", propertyTID, RentalApplication.class);
+    public List<RentalApplication> findByPropertyId(@NotNull @NotBlank String propertyId) {
+        return queryService.findAllBy(RentalApplication.Fields.propertyId, propertyId, RentalApplication.class);
     }
 
 
@@ -68,8 +69,8 @@ public class RentalApplicationService {
 
     public void enrich(RentalApplication model) {
 
-        if (model.getTrackingId() == null) {
-            model.setStatus(EnRentalApplicationStatus.PendingOwnerReview.name());
+        if (model.getId() == null) {
+            model.setStatus(EnRentalApplicationStatus.PendingOwnerReview);
         }
         ModelEnricher.enrich(model);
     }

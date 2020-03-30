@@ -1,0 +1,15 @@
+mutation ($user: UserInput!) {
+    create(user: $user) {
+        id
+        createdDate
+        modifiedDate
+        firstName
+        lastName
+        dateOfBirth
+        gender
+        email
+        status
+        enabled
+        #password //this is hiden
+    }
+}

@@ -1,10 +1,9 @@
-package com.mg.smartrent.renter.service;
+package com.mg.smartrent.renter.services;
 
 
 import com.mg.persistence.service.QueryService;
+import com.mg.smartrent.domain.models.BizItem;
 import com.mg.smartrent.domain.models.Renter;
-import com.mg.smartrent.domain.models.RenterReview;
-import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.domain.validation.ModelValidationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +37,7 @@ public class RenterService {
         enrich(model);
         validate(model);
         Renter renter = queryService.save(model);
-        log.info("Renter created. TrackingId = " + renter.getTrackingId());
+        log.info("Renter created. Id = {}", renter.getId());
         return renter;
     }
 
@@ -51,8 +50,8 @@ public class RenterService {
 //        }
     }
 
-    public Renter findByTrackingId(@NotNull String trackingId) {
-        List<Renter> renters = queryService.findAllBy("trackingId", trackingId, Renter.class);
+    public Renter findById(@NotNull String id) {
+        List<Renter> renters = queryService.findAllBy(BizItem.Fields.id, id, Renter.class);
         return (renters != null && !renters.isEmpty()) ? renters.get(0) : null;
     }
 

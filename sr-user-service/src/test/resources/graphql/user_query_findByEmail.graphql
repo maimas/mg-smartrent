@@ -1,0 +1,15 @@
+query ($email: String!) {
+    findByEmail(email: $email) {
+        id
+        createdDate
+        modifiedDate
+        firstName
+        lastName
+        dateOfBirth
+        gender
+        email
+        status
+        enabled
+        #password //this is hiden
+    }
+}

@@ -7,9 +7,9 @@ import com.mg.smartrent.domain.models.RentalApplication
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException
 import com.mg.smartrent.domain.validation.ModelValidationException
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.service.ExternalUserService
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.RentalApplicationService
+import com.mg.smartrent.property.services.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.RentalApplicationService
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +50,7 @@ class TestRentalApplicationService extends IntegrationTestsSetup {
             purgeCollection(RentalApplication.class)
 
             MockitoAnnotations.initMocks(this)
-            when(userService.userExists(dbProperty.getUserTID())).thenReturn(true)//mock external service call
+            when(userService.userExists(dbProperty.getUserId())).thenReturn(true)//mock external service call
 
             dbProperty = propertyService.save(dbProperty)
             testsSetupExecuted = true
@@ -74,28 +74,28 @@ class TestRentalApplicationService extends IntegrationTestsSetup {
 
         then: "exception is thrown"
         ModelBusinessValidationException e = thrown()
-        e.getMessage() == "Rental Application could not be saved. User not found, UserTID = mockedUserId"
+        e.getMessage() == "Rental Application could not be saved. User not found, UserId = mockedUserId"
     }
 
     def "test: save listing for in-existent User"() {
         setup: "mocking user"
         def application = generateRentalApplication()
-        application.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(application.getRenterUserTID())).thenReturn(false)//mock external service call to user not found
+        application.setPropertyId(dbProperty.getId())
+        when(userService.userExists(application.getRenterUserId())).thenReturn(false)//mock external service call to user not found
 
         when: "saving listing"
         rentalApplicationService.save(application)
 
         then: "exception is thrown"
         ModelBusinessValidationException e = thrown()
-        e.getMessage() == "Rental Application could not be saved. User not found, UserTID = mockedUserId"
+        e.getMessage() == "Rental Application could not be saved. User not found, UserId = mockedUserId"
     }
 
     def "test: save rental application with same checkin/checkout date"() {
         setup: "mock user exists"
         def application = generateRentalApplication()
-        application.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(application.getRenterUserTID())).thenReturn(true)//mock external service call
+        application.setPropertyId(dbProperty.getId())
+        when(userService.userExists(application.getRenterUserId())).thenReturn(true)//mock external service call
 
         when: "saving with same dates"
         def date = new Date(System.currentTimeMillis())
@@ -110,8 +110,8 @@ class TestRentalApplicationService extends IntegrationTestsSetup {
     def "test: save rental application with checkin date after checkout date"() {
         setup:
         def application = generateRentalApplication()
-        application.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(application.getRenterUserTID())).thenReturn(true)//mock external service call
+        application.setPropertyId(dbProperty.getId())
+        when(userService.userExists(application.getRenterUserId())).thenReturn(true)//mock external service call
 
         when: "checkin after checkout"
         application.setCheckInDate(new Date(System.currentTimeMillis() + 100000))
@@ -126,52 +126,52 @@ class TestRentalApplicationService extends IntegrationTestsSetup {
     def "test: save listing for existent User and Property"() {
         setup:
         def application = generateRentalApplication()
-        application.setPropertyTID(dbProperty.getTrackingId())
-        when(userService.userExists(application.getRenterUserTID())).thenReturn(true)//mock external service call
+        application.setPropertyId(dbProperty.getId())
+        when(userService.userExists(application.getRenterUserId())).thenReturn(true)//mock external service call
 
         when: "saving listing"
         application = rentalApplicationService.save(application)
 
         then: "successfully saved"
-        application.getTrackingId() != null
+        application.getId() != null
         application.getCreatedDate() != null
         application.getModifiedDate() != null
-        application.getRenterUserTID() == "mockedUserId"
-        application.getPropertyTID() == dbProperty.trackingId
+        application.getRenterUserId() == "mockedUserId"
+        application.getPropertyId() == dbProperty.id
         application.getPrice() == 100
-        application.getCurrency() == EnCurrency.USD.name()
+        application.getCurrency() == EnCurrency.USD
         application.getCheckInDate().before(new Date())
         application.getCheckOutDate().after(new Date())
     }
 
-    def "test: findByTracking then findByPropertyTID then findByRenterUserTID"() {
+    def "test: findById then findByPropertyId then findByRenterUserId"() {
         setup:
         def property = generateProperty()
-        when(userService.userExists(property.getUserTID())).thenReturn(true)//mock external service call
+        when(userService.userExists(property.getUserId())).thenReturn(true)//mock external service call
         property = propertyService.save(property)
 
         def application = generateRentalApplication()
-        application.setPropertyTID(property.getTrackingId())
-        application.setRenterUserTID('mockedRenterUserIdentifier')
+        application.setPropertyId(property.getId())
+        application.setRenterUserId('mockedRenterUserIdentifier')
         when(userService.userExists('mockedRenterUserIdentifier')).thenReturn(true)//mock external service call
 
 
         when:
         application = rentalApplicationService.save(application)
-        def dbListing = rentalApplicationService.findByTrackingId(application.getTrackingId())
+        def dbListing = rentalApplicationService.findById(application.getId())
 
         then: 'found'
         dbListing != null
 
 
         when:
-        def applications = rentalApplicationService.findByPropertyTID(application.getPropertyTID())
+        def applications = rentalApplicationService.findByPropertyId(application.getPropertyId())
 
         then: 'only one instance found'
         applications.size() == 1
 
         when:
-        applications = rentalApplicationService.findByRenterUserTID(application.getRenterUserTID())
+        applications = rentalApplicationService.findByRenterUserId(application.getRenterUserId())
 
         then: 'only one instance found'
         applications.size() == 1

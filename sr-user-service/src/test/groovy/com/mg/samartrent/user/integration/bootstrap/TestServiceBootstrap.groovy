@@ -23,18 +23,17 @@ class TestServiceBootstrap extends IntegrationTestsSetup {
 
     def "test: admin user creation on system startup"() {
         when:
-        def admin = userService.findByEmail("sys.admin@smartrent.com")
+        def admin = userService.findByEmail("sys.admin@smartrent.com").get()
 
         then:
         admin != null
-        admin.getTrackingId() == '12341234'
         admin.getCreatedDate() != null
         admin.getModifiedDate() != null
         admin.getFirstName() == "System"
         admin.getLastName() == "Administrator"
         admin.getEmail() == "sys.admin@smartrent.com"
-        admin.getStatus() == EnUserStatus.Active.name()
-        admin.getGender() == EnGender.Unknown.name()
+        admin.getStatus() == EnUserStatus.Active
+        admin.getGender() == EnGender.Unknown
         admin.getDateOfBirth() != null
         admin.getPassword() != "12341234"
         passwordEncoder.matches("12341234", admin.getPassword())

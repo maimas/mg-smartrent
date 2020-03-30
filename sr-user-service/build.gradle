@@ -13,9 +13,17 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
 
+    //GraphQL
+    implementation group: 'com.graphql-java', name: 'graphql-spring-boot-starter', version: "${project['graphql.version']}"
+    implementation group: 'com.graphql-java', name: 'graphiql-spring-boot-starter', version: "${project['graphql.version']}"
+    implementation group: 'io.leangen.graphql', name: 'graphql-spqr-spring-boot-starter', version: "${project['graphql-spqr.version']}"
+
     implementation "com.mg.smartrent:domain-model:${project['mg-domain-model.version']}"
     implementation "com.mg.platform:persistence:${project['mg-persistence.version']}"
     implementation "org.valid4j:valid4j:${project['valid4j.version']}"
+
+    //GraphQL Test
+    testImplementation(group: 'com.graphql-java', name: 'graphql-spring-boot-starter-test', version: "${project['graphql.version']}")
 }
 
 def dockerFileDir = projectDir

@@ -1,5 +1,6 @@
 package com.mg.smartrent.user.config.documentation;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,16 +15,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class DocumentationConfiguration {
+@Log4j2
+public class DocumentationConfig {
 
     private ApplicationContext applicationContext;
 
-    public DocumentationConfiguration(ApplicationContext applicationContext) {
+    public DocumentationConfig(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Bean
     public Docket apiDocket() {
+        log.info("Initializing Swagger API documentation...");
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())

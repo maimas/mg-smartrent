@@ -5,8 +5,8 @@ import com.mg.smartrent.domain.enums.EnBuildingType
 import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.ExternalUserService
 import org.junit.Assert
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -45,7 +45,7 @@ class TestPropertyValidation extends Specification {
 
         setup: "mock db call and user exists call"
         MockitoAnnotations.initMocks(this)
-        when(userService.userExists(model.getUserTID())).thenReturn(true)//mock external service call
+        when(userService.userExists(model.getUserId())).thenReturn(true)//mock external service call
         when(queryService.save(model)).thenReturn(model)//mock db call
 
         when: "saving property with a new test value"
@@ -67,43 +67,43 @@ class TestPropertyValidation extends Specification {
         }
 
         where:
-        model              | field              | value                                         | expectException | errorMsg
-        generateProperty() | 'userTID'          | null                                          | true            | "User with trackingId=null not found."
-        generateProperty() | 'userTID'          | ""                                            | true            | "User with trackingId= not found."
-        generateProperty() | 'userTID'          | "inValidUserID"                               | true            | "User with trackingId=inValidUserID not found."
-        generateProperty() | 'userTID'          | "userId1234"                                  | false           | null
+        model              | field              | value                                  | expectException | errorMsg
+        generateProperty() | 'userId'           | null                                   | true            | "User with Id=null not found."
+        generateProperty() | 'userId'           | ""                                     | true            | "User with Id= not found."
+        generateProperty() | 'userId'           | "inValidUserID"                        | true            | "User with Id=inValidUserID not found."
+        generateProperty() | 'userId'           | "userId1234"                           | false           | null
 
-        generateProperty() | 'buildingType'     | EnBuildingType.Apartment.name()               | false           | null
-        generateProperty() | 'buildingType'     | EnBuildingType.Condo.name()                   | false           | null
-        generateProperty() | 'buildingType'     | EnBuildingType.House.name()                   | false           | null
-        generateProperty() | 'buildingType'     | null                                          | true            | "Field [buildingType], value [null], reason [must not be null]"
-        generateProperty() | 'buildingType'     | ""                                            | true            | "Field [buildingType], value [], reason [must be any of enum class com.mg.smartrent.domain.enums.EnBuildingType]"
-        generateProperty() | 'buildingType'     | "invalid"                                     | true            | "Field [buildingType], value [invalid], reason [must be any of enum class com.mg.smartrent.domain.enums.EnBuildingType]"
+        generateProperty() | 'buildingType'     | EnBuildingType.Apartment               | false           | null
+        generateProperty() | 'buildingType'     | EnBuildingType.Condo                   | false           | null
+        generateProperty() | 'buildingType'     | EnBuildingType.House                   | false           | null
+        generateProperty() | 'buildingType'     | null                                   | true            | 'Field "buildingType" has an invalid value value "null". [must not be null]'
+        generateProperty() | 'buildingType'     | ""                                     | true            | 'Field "buildingType" has an invalid value value "". [must be any of enum class com.mg.smartrent.domain.enums.EnBuildingType]'
+        generateProperty() | 'buildingType'     | "invalid"                              | true            | 'Field "buildingType" has an invalid value value "invalid". [must be any of enum class com.mg.smartrent.domain.enums.EnBuildingType]'
 
-        generateProperty() | 'condition'        | EnPropertyCondition.Normal.name()             | false           | null
-        generateProperty() | 'condition'        | EnPropertyCondition.RequiresReparation.name() | false           | null
-        generateProperty() | 'condition'        | EnPropertyCondition.AfterReparation.name()    | false           | null
-        generateProperty() | 'condition'        | "invalid"                                     | true            | "Field [condition], value [invalid], reason [must be any of enum class com.mg.smartrent.domain.enums.EnPropertyCondition]"
-        generateProperty() | 'condition'        | ""                                            | true            | "Field [condition], value [], reason [must be any of enum class com.mg.smartrent.domain.enums.EnPropertyCondition]"
-        generateProperty() | 'condition'        | null                                          | true            | "Field [condition], value [null], reason [must not be null]"
+        generateProperty() | 'condition'        | EnPropertyCondition.Normal             | false           | null
+        generateProperty() | 'condition'        | EnPropertyCondition.RequiresReparation | false           | null
+        generateProperty() | 'condition'        | EnPropertyCondition.AfterReparation    | false           | null
+        generateProperty() | 'condition'        | "invalid"                              | true            | 'Field "condition" has an invalid value value "invalid". [must be any of enum class com.mg.smartrent.domain.enums.EnPropertyCondition]'
+        generateProperty() | 'condition'        | ""                                     | true            | 'Field "condition" has an invalid value value "". [must be any of enum class com.mg.smartrent.domain.enums.EnPropertyCondition]'
+        generateProperty() | 'condition'        | null                                   | true            | 'Field "condition" has an invalid value value "null". [must not be null]'
 
-        generateProperty() | 'totalRooms'       | -1                                            | true            | "Field [totalRooms], value [-1], reason [must be greater than or equal to 0]"
-        generateProperty() | 'totalRooms'       | 1                                             | false           | null
-        generateProperty() | 'totalRooms'       | 10000                                         | false           | null
+        generateProperty() | 'totalRooms'       | -1                                     | true            | 'Field "totalRooms" has an invalid value value "-1". [must be greater than or equal to 0]'
+        generateProperty() | 'totalRooms'       | 1                                      | false           | null
+        generateProperty() | 'totalRooms'       | 10000                                  | false           | null
 
-        generateProperty() | 'totalBathRooms'   | -1                                            | true            | "Field [totalBathRooms], value [-1], reason [must be greater than or equal to 0]"
-        generateProperty() | 'totalBathRooms'   | 1                                             | false           | null
-        generateProperty() | 'totalBathRooms'   | 10000                                         | false           | null
+        generateProperty() | 'totalBathRooms'   | -1                                     | true            | 'Field "totalBathRooms" has an invalid value value "-1". [must be greater than or equal to 0]'
+        generateProperty() | 'totalBathRooms'   | 1                                      | false           | null
+        generateProperty() | 'totalBathRooms'   | 10000                                  | false           | null
 
-        generateProperty() | 'totalBalconies'   | -1                                            | true            | "Field [totalBalconies], value [-1], reason [must be greater than or equal to 0]"
-        generateProperty() | 'totalBalconies'   | 1                                             | false           | null
-        generateProperty() | 'totalBalconies'   | 10000                                         | false           | null
+        generateProperty() | 'totalBalconies'   | -1                                     | true            | 'Field "totalBalconies" has an invalid value value "-1". [must be greater than or equal to 0]'
+        generateProperty() | 'totalBalconies'   | 1                                      | false           | null
+        generateProperty() | 'totalBalconies'   | 10000                                  | false           | null
 
 //        generateProperty() | 'thumbnail'        | null                                          | false           | null
-        generateProperty() | 'thumbnail'        | new byte[1]                                   | false           | null
+        generateProperty() | 'thumbnail'        | new byte[1]                            | false           | null
 
-        generateProperty() | 'parkingAvailable' | true                                          | false           | null
-        generateProperty() | 'parkingAvailable' | false                                         | false           | null
+        generateProperty() | 'parkingAvailable' | true                                   | false           | null
+        generateProperty() | 'parkingAvailable' | false                                  | false           | null
     }
 
 }

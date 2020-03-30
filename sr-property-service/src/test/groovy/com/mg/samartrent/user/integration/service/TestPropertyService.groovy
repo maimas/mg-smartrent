@@ -5,8 +5,8 @@ import com.mg.smartrent.domain.enums.EnBuildingType
 import com.mg.smartrent.domain.enums.EnPropertyCondition
 import com.mg.smartrent.domain.models.Property
 import com.mg.smartrent.property.PropertyApplication
-import com.mg.smartrent.property.service.PropertyService
-import com.mg.smartrent.property.service.ExternalUserService
+import com.mg.smartrent.property.services.PropertyService
+import com.mg.smartrent.property.services.ExternalUserService
 import org.mockito.InjectMocks
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,17 +49,17 @@ class TestPropertyService extends IntegrationTestsSetup {
 
         setup: "mock external REST call"
         dbProperty = generateProperty()
-        when(userService.userExists(dbProperty.getUserTID())).thenReturn(true)//mock external service call
+        when(userService.userExists(dbProperty.getUserId())).thenReturn(true)//mock external service call
 
         when: "saving a new property"
 
         dbProperty = propertyService.save(dbProperty)
 
         then: "successfully saved"
-        dbProperty.getTrackingId() != null
+        dbProperty.getId() != null
         dbProperty.getCreatedDate() != null
         dbProperty.getModifiedDate() != null
-        dbProperty.getUserTID() == "userId1234"
+        dbProperty.getUserId() == "userId1234"
         dbProperty.getBuildingType() == EnBuildingType.Condo.name()
         dbProperty.getCondition() == EnPropertyCondition.Normal.name()
         dbProperty.getTotalRooms() == 10
@@ -69,32 +69,32 @@ class TestPropertyService extends IntegrationTestsSetup {
         dbProperty.isParkingAvailable()
     }
 
-    def "test: find renter by trackingId"() {
+    def "test: find renter by id"() {
         when:
-        def property = propertyService.findByTrackingId(dbProperty.getTrackingId())
+        def property = propertyService.findById(dbProperty.getId())
 
         then:
         property != null
-        property.getTrackingId() == dbProperty.getTrackingId()
+        property.getId() == dbProperty.getId()
     }
 
-    def "test: find renter by userTID"() {
+    def "test: find renter by userId"() {
         when:
-        def properties = propertyService.findByUserTID(dbProperty.getUserTID())
+        def properties = propertyService.findByUserId(dbProperty.getUserId())
 
         then:
         properties.size() == 1
-        properties.get(0).getUserTID() == dbProperty.getUserTID()
+        properties.get(0).getUserId() == dbProperty.getUserId()
     }
 
     def "test: edit property"() {
         setup:
         def dbProperty = generateProperty()
-        when(userService.userExists(dbProperty.getUserTID())).thenReturn(true)//mock external service call
+        when(userService.userExists(dbProperty.getUserId())).thenReturn(true)//mock external service call
         propertyService.save(dbProperty)
 
         when:
-        def editedProperty = propertyService.findByTrackingId(dbProperty.trackingId)
+        def editedProperty = propertyService.findById(dbProperty.id)
         editedProperty.setTotalRooms(10)
 
         then:

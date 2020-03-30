@@ -3,7 +3,7 @@ package com.mg.samartrent.renter.unit
 import com.mg.smartrent.domain.enums.EnGender
 import com.mg.smartrent.domain.models.Renter
 import com.mg.smartrent.renter.RenterApplication
-import com.mg.smartrent.renter.service.RenterService
+import com.mg.smartrent.renter.services.RenterService
 import org.junit.Assert
 import org.springframework.beans.BeanWrapperImpl
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,13 +57,13 @@ class TestRenterValidation extends Specification {
 
         where:
         model            | field         | value                   | expectedValue           | expectException | checkContains | errorMsg
-        generateRenter() | 'firstName'   | null                    | null                    | true            | false         | "Field [firstName], value [null], reason [must not be null]"
-        generateRenter() | 'firstName'   | ""                      | null                    | true            | false         | "Field [firstName], value [], reason [size must be between 1 and 100]"
+        generateRenter() | 'firstName'   | null                    | null                    | true            | false         | 'Field "firstName" has an invalid value value "null". [must not be null]'
+        generateRenter() | 'firstName'   | ""                      | null                    | true            | false         | 'Field "firstName" has an invalid value value "". [size must be between 1 and 100]'
         generateRenter() | 'firstName'   | longString              | null                    | true            | true          | "[size must be between 1 and 100]"
         generateRenter() | 'firstName'   | "FName"                 | "FName"                 | false           | false         | null
 
-        generateRenter() | 'lastName'    | null                    | null                    | true            | false         | "Field [lastName], value [null], reason [must not be null]"
-        generateRenter() | 'lastName'    | ""                      | null                    | true            | false         | "Field [lastName], value [], reason [size must be between 1 and 100]"
+        generateRenter() | 'lastName'    | null                    | null                    | true            | false         | 'Field "lastName" has an invalid value value "null". [must not be null]'
+        generateRenter() | 'lastName'    | ""                      | null                    | true            | false         | 'Field "lastName" has an invalid value value "". [size must be between 1 and 100]'
         generateRenter() | 'lastName'    | longString              | null                    | true            | true          | "[size must be between 1 and 100]"
         generateRenter() | 'lastName'    | "LName"                 | "LName"                 | false           | false         | null
 
@@ -71,21 +71,21 @@ class TestRenterValidation extends Specification {
         generateRenter() | 'dateOfBirth' | null                    | null                    | false           | false         | null
 
         generateRenter() | 'phoneNumber' | null                    | null                    | false           | false         | null
-        generateRenter() | 'phoneNumber' | ""                      | null                    | true            | true          | "Field [phoneNumber], value [], reason [must be a valid phone number]"
-        generateRenter() | 'phoneNumber' | "dasdasds"              | null                    | true            | false         | "Field [phoneNumber], value [dasdasds], reason [must be a valid phone number]"
+        generateRenter() | 'phoneNumber' | ""                      | null                    | true            | false         | 'Field "phoneNumber" has an invalid value value "". [must be a valid phone number]\nField "phoneNumber" has an invalid value value "". [size must be between 1 and 100]'
+        generateRenter() | 'phoneNumber' | "dasdasds"              | null                    | true            | false         | 'Field "phoneNumber" has an invalid value value "dasdasds". [must be a valid phone number]'
         generateRenter() | 'phoneNumber' | "3252402021"            | "3252402021"            | false           | false         | null
 
-        generateRenter() | 'gender'      | null                    | null                    | true            | false         | "Field [gender], value [null], reason [must not be null]"
-        generateRenter() | 'gender'      | ""                      | null                    | true            | false         | "Field [gender], value [], reason [must be any of enum class com.mg.smartrent.domain.enums.EnGender]"
-        generateRenter() | 'gender'      | "notValid"              | null                    | true            | false         | "Field [gender], value [notValid], reason [must be any of enum class com.mg.smartrent.domain.enums.EnGender]"
+        generateRenter() | 'gender'      | null                    | null                    | true            | false         | 'Field "gender" has an invalid value value "null". [must not be null]'
+        generateRenter() | 'gender'      | ""                      | null                    | true            | false         | 'Field "gender" has an invalid value value "". [must be any of enum class com.mg.smartrent.domain.enums.EnGender]'
+        generateRenter() | 'gender'      | "notValid"              | null                    | true            | false         | 'Field "gender" has an invalid value value "notValid". [must be any of enum class com.mg.smartrent.domain.enums.EnGender]'
         generateRenter() | 'gender'      | EnGender.Male.name()    | EnGender.Male.name()    | false           | false         | null
         generateRenter() | 'gender'      | EnGender.Female.name()  | EnGender.Female.name()  | false           | false         | null
         generateRenter() | 'gender'      | EnGender.Unknown.name() | EnGender.Unknown.name() | false           | false         | null
 
-        generateRenter() | 'email'       | null                    | null                    | true            | false         | "Field [email], value [null], reason [must not be null]"
-        generateRenter() | 'email'       | ""                      | null                    | true            | false         | "Field [email], value [], reason [size must be between 1 and 100]"
-        generateRenter() | 'email'       | "@test.com"             | null                    | true            | false         | "Field [email], value [@test.com], reason [must be a well-formed email address]"
-        generateRenter() | 'email'       | longString              | null                    | true            | true          | "reason [must be a well-formed email address]"
+        generateRenter() | 'email'       | null                    | null                    | true            | false         | 'Field "email" has an invalid value value "null". [must not be null]'
+        generateRenter() | 'email'       | ""                      | null                    | true            | false         | 'Field "email" has an invalid value value "". [size must be between 1 and 100]'
+        generateRenter() | 'email'       | "@test.com"             | null                    | true            | false         | 'Field "email" has an invalid value value "@test.com". [must be a well-formed email address]'
+        generateRenter() | 'email'       | longString              | null                    | true            | true          | 'Field "email" has an invalid value value'
         generateRenter() | 'email'       | "test.test@test.com"    | "test.test@test.com"    | false           | false         | null
 
     }

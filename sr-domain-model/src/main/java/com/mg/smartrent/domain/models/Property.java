@@ -20,7 +20,7 @@ public class Property extends BizItem {
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String userTID;
+    private String userId;
 
     @NotNull
     @ValueOfEnum(enumClass = EnBuildingType.class)

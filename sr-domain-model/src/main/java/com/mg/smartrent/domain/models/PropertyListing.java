@@ -21,11 +21,11 @@ public class PropertyListing extends BizItem {
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String userTID;
+    private String userId;
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String propertyTID;
+    private String propertyId;
 
     @PositiveOrZero
     private long price;

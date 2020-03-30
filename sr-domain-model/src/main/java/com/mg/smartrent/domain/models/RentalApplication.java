@@ -23,18 +23,18 @@ public class RentalApplication extends BizItem {
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String renterUserTID;
+    private String renterUserId;
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String propertyTID;
+    private String propertyId;
 
     @Positive
     private Integer price;
 
     @NotNull
-    @ValueOfEnum(enumClass = EnCurrency.class)
-    private String currency;
+//    @ValueOfEnum(enumClass = EnCurrency.class)
+    private EnCurrency currency;
 
     @NotNull
     private Date checkInDate;
@@ -43,7 +43,7 @@ public class RentalApplication extends BizItem {
     private Date checkOutDate;
 
     @NotNull
-    @ValueOfEnum(enumClass = EnRentalApplicationStatus.class)
-    private String status;
+//    @ValueOfEnum(enumClass = EnRentalApplicationStatus.class)
+    private EnRentalApplicationStatus status;
 
 }

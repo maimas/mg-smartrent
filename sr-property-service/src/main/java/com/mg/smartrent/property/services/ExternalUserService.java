@@ -1,7 +1,7 @@
-package com.mg.smartrent.property.service;
+package com.mg.smartrent.property.services;
 
+import com.mg.smartrent.domain.models.User;
 import com.mg.smartrent.property.config.RestServicesConfig;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +23,10 @@ public class ExternalUserService {
         this.restTemplate = restTemplate;
     }
 
-    public boolean userExists(@NotNull @NotBlank String userTID) {
-        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users?exists=" + userTID);
-        ResponseEntity response = restTemplate.getForEntity(uri, ResponseEntity.class);
+    public boolean userExists(@NotNull @NotBlank String userId) {
+        URI uri = URI.create(restServicesConfig.getUsersServiceURI() + "/rest/users/" + userId);
+        ResponseEntity<User> response = restTemplate.getForEntity(uri, User.class);
 
-        return response.getStatusCode() == HttpStatus.OK;
+        return response.getBody() != null;
     }
 }

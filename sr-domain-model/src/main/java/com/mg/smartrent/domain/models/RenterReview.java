@@ -19,11 +19,11 @@ public class RenterReview extends BizItem {
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String userTID;
+    private String userId;
 
     @NotNull
     @Size(min = 1, max = 100)
-    private String renterTID;
+    private String renterId;
 
     @NotNull
     @Size(min = 1, max = 1000000)

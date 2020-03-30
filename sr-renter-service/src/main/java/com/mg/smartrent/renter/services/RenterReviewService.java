@@ -1,4 +1,4 @@
-package com.mg.smartrent.renter.service;
+package com.mg.smartrent.renter.services;
 
 
 import com.mg.persistence.service.QueryService;
@@ -37,24 +37,24 @@ public class RenterReviewService {
         enrich(model);
         validate(model);
         RenterReview review = queryService.save(model);
-        log.info("Renter review created. TrackingId = " + review.getTrackingId());
+        log.info("Renter review created. Id = {}", review.getId());
         return review;
     }
 
-    public List<RenterReview> findByRenterTID(@NotNull String renterTID)  {
-        return queryService.findAllBy("renterTID", renterTID, RenterReview.class);
+    public List<RenterReview> findByRenterId(@NotNull String renterId) {
+        return queryService.findAllBy(RenterReview.Fields.renterId, renterId, RenterReview.class);
     }
 
     //----------------Private Methods------------------------------
     private void validate(RenterReview renterReview) throws ModelValidationException {
         ModelValidator.validate(renterReview);
 
-        if (!userService.userExists(renterReview.getUserTID())) {
-            throw new RuntimeException(String.format("Renter Review could not be saved. User with TID %s not found.", renterReview.getUserTID()));
+        if (!userService.userExists(renterReview.getUserId())) {
+            throw new RuntimeException(String.format("Renter Review could not be saved. User with Id %s not found.", renterReview.getUserId()));
         }
 
-        if (renterService.findByTrackingId(renterReview.getRenterTID()) == null) {
-            throw new RuntimeException(String.format("Renter Review could not be saved. Renter with TID %s not found.", renterReview.getUserTID()));
+        if (renterService.findById(renterReview.getRenterId()) == null) {
+            throw new RuntimeException(String.format("Renter Review could not be saved. Renter with Id %s not found.", renterReview.getRenterId()));
         }
     }
 }

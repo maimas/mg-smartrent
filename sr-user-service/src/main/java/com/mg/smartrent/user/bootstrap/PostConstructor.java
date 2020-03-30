@@ -25,21 +25,21 @@ public class PostConstructor {
     private void createAdminUser() throws ModelValidationException {
         String adminEmail = "sys.admin@smartrent.com";
 
-        if (userService.findByEmail(adminEmail) == null) {
+        if (!userService.findByEmail(adminEmail).isPresent()) {
             User admin = new User();
-            admin.setTrackingId("12341234");
             admin.setFirstName("System");
             admin.setLastName("Administrator");
             admin.setPassword("12341234");
-            admin.setGender(EnGender.Unknown.name());
+            admin.setGender(EnGender.Unknown);
             admin.setEmail(adminEmail);
             admin.setDateOfBirth(new Date());
-            admin = userService.save(admin);
+            admin = userService.create(admin);
 
-            admin.setStatus(EnUserStatus.Active.name());
+            admin.setStatus(EnUserStatus.Active);
+            admin.setPassword(null);
             userService.update(admin);
 
-            log.info("Sys Admin user created.");
+            log.debug("Sys Admin user created.");
         }
     }
 

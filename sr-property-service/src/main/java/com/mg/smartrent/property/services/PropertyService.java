@@ -1,7 +1,8 @@
-package com.mg.smartrent.property.service;
+package com.mg.smartrent.property.services;
 
 
 import com.mg.persistence.service.QueryService;
+import com.mg.smartrent.domain.models.BizItem;
 import com.mg.smartrent.domain.models.Property;
 import com.mg.smartrent.domain.validation.ModelBusinessValidationException;
 import com.mg.smartrent.domain.validation.ModelValidationException;
@@ -34,25 +35,25 @@ public class PropertyService {
 
 
     public Property save(@NotNull Property model) throws ModelValidationException {
-        if (!userService.userExists(model.getUserTID())) {
-            throw new ModelBusinessValidationException(String.format("User with trackingId=%s not found.", model.getUserTID()));
+        if (!userService.userExists(model.getUserId())) {
+            throw new ModelBusinessValidationException(String.format("User with Id=%s not found.", model.getUserId()));
         }
         enrich(model);
         validate(model);
         Property property = queryService.save(model);
-        log.info("Property created. TrackingId = " + property.getTrackingId());
+        log.info("Property created. Id = {}", property.getId());
 
         return property;
     }
 
 
-    public Property findByTrackingId(@NotNull @NotBlank String trackingId) {
-        List<Property> propertyList = queryService.findAllBy("trackingId", trackingId, Property.class);
+    public Property findById(@NotNull @NotBlank String id) {
+        List<Property> propertyList = queryService.findAllBy(BizItem.Fields.id, id, Property.class);
         return (propertyList == null || propertyList.isEmpty()) ? null : propertyList.get(0);
     }
 
-    public List<Property> findByUserTID(@NotNull @NotBlank String userTID) {
-        return queryService.findAllBy("userTID", userTID, Property.class);
+    public List<Property> findByUserId(@NotNull @NotBlank String userId) {
+        return queryService.findAllBy(Property.Fields.userId, userId, Property.class);
     }
 
 
