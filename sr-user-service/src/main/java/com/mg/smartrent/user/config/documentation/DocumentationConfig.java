@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,10 +19,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Log4j2
 public class DocumentationConfig {
 
-    private ApplicationContext applicationContext;
+    private Environment environment;
 
-    public DocumentationConfig(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public DocumentationConfig(Environment environment) {
+        this.environment = environment;
     }
 
     @Bean
@@ -38,7 +39,7 @@ public class DocumentationConfig {
     @Bean
     public ApiInfo apiInfo() {
         final ApiInfoBuilder builder = new ApiInfoBuilder();
-        builder.title(applicationContext.getId())
+        builder.title(environment.getProperty("spring.application.name"))
                 .description("User Service")
                 .version("1.0")
                 .termsOfServiceUrl("http://toBeDone.com")
